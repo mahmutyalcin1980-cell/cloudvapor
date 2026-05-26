@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Anlık Hava Durumu - Meteoroloji</title>
-<!-- KESİN ÇÖZÜM: Agora kütüphanesini en başta güvenli ve hatasız yükle -->
-<script src="https://agora.io"></script>
+<!-- KESİN ÇÖZÜM: Sayfayı dondurmaması için kütüphane arka plana alındı -->
+<script src="https://agora.io" defer async></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background-color: #f3f4f6; color: #1f2937; font-family: sans-serif; padding: 15px; height: 100dvh; width: 100vw; overflow: hidden; user-select: none; position: relative; }
@@ -38,26 +38,18 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 0% { transform: translate(0, 0) scale(1); opacity: 1; }
 100% { transform: translate(var(--target-x), var(--target-y)) scale(0.3); opacity: 0; }
 }
-
-/* YAĞMURUN BULUTA YAKIN BAŞLAYAN ANIMASYONU */
 @keyframes rainFallAnimation {
 0% { transform: translateY(0); opacity: 0; }
 15% { opacity: 1; }
 85% { opacity: 1; }
 100% { transform: translateY(140px); opacity: 0; }
 }
-
-@keyframes destructionRain {
-0% { transform: translateY(0); opacity: 0.9; }
-100% { transform: translateY(650px); opacity: 0; }
-}
+@keyframes destructionRain { 0% { transform: translateY(0); opacity: 0.9; } 100% { transform: translateY(650px); opacity: 0; } }
 @keyframes cloudLightning {
 0%, 90%, 100% { border-color: #0055ff; }
 3%, 7% { border-color: #ffffff; }
 }
 .fly-animation { display: inline-block; animation: flyToCenterCloud 2.4s forwards ease-in-out; }
-
-/* GENİŞ YAĞMUR DAMLASI TANIMLAMALARI */
 .intro-drop { position: absolute; color: #00a8cc; font-size: 18px; font-weight: bold; animation: rainFallAnimation 1.0s linear infinite !important; pointer-events: none; z-index: 999; display: block !important; }
 .destruction-drop { position: absolute; color: #00a8cc; font-size: 14px; animation: destructionRain 1.3s linear forwards; pointer-events: none; }
 .theme-cloud-active { animation: cloudLightning 4s ease-in-out infinite; }
@@ -66,8 +58,6 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 #orientation-lock { position: fixed; inset: 0; background: #000; color: #ef4444; z-index: 99999; text-align: center; font-family: monospace; font-weight: bold; padding: 40px; display: none; flex-direction: column; justify-content: center; align-items: center; font-size: 16px; border: 4px solid #ef4444; }
 @media screen and (orientation: landscape) and (max-width: 950px) and (pointer: coarse) { #orientation-lock { display: flex; } }
 </style>
-<!-- AGORA KÜRESEL CANLI YAYIN SDK KÜTÜPHANESİ ENTEGRE EDİLDİ -->
-<script src="https://agora.io"></script>
 </head>
 <body>
 <div id="orientation-lock">
@@ -86,7 +76,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
         <div id="windText">💨 Rüzgar: 12 km/s</div>
     </div>
     <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
-        <!-- Harf ve rakam yazdıran evrensel input çubuğu -->
+        <!-- KESİN ÇÖZÜM: type="text" yapılarak klavyenin harfe geçmesi sağlandı -->
         <input id="cityInput" type="text" placeholder="Şehir Ara..." class="fake-input" autocomplete="off" style="padding-right: 45px;">
         <span id="searchBtn" style="position: absolute; right: 15px; cursor: pointer; font-size: 18px; z-index: 20; color: #3b82f6;">🔍</span>
     </div>
@@ -113,7 +103,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
             </div>
             <div>
                 <label>BAĞLANILACAK HEDEF:</label>
-                <!-- type="text" yapılarak karşı taraf isminde de harf klavyesi açıldı -->
+                <!-- KESİN ÇÖZÜM: type="text" yapılarak hedef girerken de klavye harfe açıldı -->
                 <input id="targetNumber" type="text" placeholder="Hedef takma adı yazın..." class="cyber-input" style="margin-top: 5px;">
             </div>
             <div class="btn-grid">
@@ -127,6 +117,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
     <div id="screen2" class="screen-container hidden" style="padding: 10px; padding-top: 100px; height: 100%; display: flex; flex-direction: column;">
         <div style="width: 100%; max-width: 980px; display: flex; flex-direction: column; flex: 1; justify-content: space-between;">
             <div style="text-align: center; font-size: 11px; letter-spacing: 3px; font-weight: bold; margin-bottom: 5px; color: #22c55e; shrink: 0;">APK GHOST ENGINE v26.00</div>
+            
             <div style="display: flex; justify-content: space-between; font-size: 11px; background: rgba(34,197,94,0.1); padding: 6px 12px; border: 1px solid rgba(34,197,94,0.3); shrink: 0; margin-bottom: 5px;">
                 <div id="premiumStatusText" style="color: #eab308; font-weight: bold;">STANDART HESAP (KOTALI)</div>
                 <div style="display: flex; gap: 15px;">
@@ -134,14 +125,15 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
                     <span id="liveMsgCounterText" style="color: #4ade80; font-weight: bold;">TOPLAM ODADAKİ MESAJ: 0 / 10</span>
                 </div>
             </div>
-            <div id="messages" style="flex: 1; overflow-y: auto; padding: 10px; border: none; background: transparent; font-size: 15px; overflow-x: visible; position: relative; min-height: 0; margin-bottom: 5px;"></div>
-            
-            <!-- AGORA DIV PANELİ: Görüntüler buraya akacak -->
-            <div id="videoPanel" class="hidden" style="width: 100%; max-width: 340px; margin: 0 auto 5px auto; display: flex; flex-direction: row; gap: 10px; height: 90px; shrink: 0;">
-                <div id="remoteVideo" style="flex: 1.6; border: 2px solid #22c55e; background-color: #000; position: relative; aspect-ratio: 4/3;"></div>
-                <div id="localVideo" style="flex: 1; border: 2px solid #22c55e; background-color: #000; position: relative; aspect-ratio: 1/1;"></div>
+
+            <div id="messages" style="flex: 1; overflow-y: auto; padding: 10px; border: none; background: transparent; font-size: 15px; overflow-x: visible; position: relative; min-height: 0; margin-bottom: 5px;">
+                <div style="color: rgba(34, 197, 94, 0.4); font-style: italic; font-size: 13px;">[Sistem]: Kripto tünel hattı açıldı.</div>
             </div>
             
+            <div id="videoPanel" class="hidden" style="width: 100%; max-width: 340px; margin: 0 auto 5px auto; display: flex; flex-direction: row; gap: 10px; height: 90px; shrink: 0;">
+                <div style="flex: 1.6; border: 2px solid #22c55e; background-color: #000; position: relative; overflow: hidden; aspect-ratio: 4/3;"><div id="remoteVideo" style="width: 100%; height: 100%;"></div></div>
+                <div style="flex: 1; border: 2px solid #22c55e; background-color: #000; position: relative; overflow: hidden; aspect-ratio: 1/1;"><div id="localVideo" style="width: 100%; height: 100%; transform: scaleX(-1);"></div></div>
+            </div>
             <form id="chatForm" style="display: flex; flex-direction: column; gap: 6px; width: 100%; shrink: 0; padding-bottom: 5px;">
                 <input id="messageInput" type="text" placeholder="Şifreli mesajınızı yazın..." autocomplete="off" style="width: 100%; background-color: #000000; border: 2px solid #22c55e; padding: 7px 10px; color: #4ade80; font-family: monospace; font-size: 14px; outline: none;">
                 <div style="display: flex; gap: 10px; width: 100%;">
@@ -154,8 +146,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io(window.location.origin);
-// Agora istemcisini başlat
-const agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+let agoraClient = null;
 
 let fakeApp, cyberApp, cityInput, secretTriggerNode;
 let searchBtn, settingsBtn, screen1, screen2;
@@ -169,7 +160,8 @@ let isIncomingCallWaiting = false;
 let totalRoomMessages = 0; let allowedCallSeconds = 120;
 let callTimerInterval = null; let isPremiumUser = false;
 
-window.onload = function() {
+// KESİN ÇÖZÜM: Kütüphane beklemeden elementler çizildiği an kilitleri devreye sok
+document.addEventListener("DOMContentLoaded", () => {
     fakeApp = document.getElementById('fakeApp');
     cyberApp = document.getElementById('cyberApp');
     cityInput = document.getElementById('cityInput');
@@ -186,7 +178,6 @@ window.onload = function() {
     videoPanel = document.getElementById('videoPanel');
     videoRequestBtn = document.getElementById('videoRequestBtn');
 
-    // KESİN ÇÖZÜM: Dinleyicileri Agora yüklenmesinden tamamen bağımsız kilitleriz
     if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
     if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
     if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
@@ -204,7 +195,14 @@ window.onload = function() {
         if (settingsBtn) settingsBtn.style.display = "none";
         socket.emit('register-ghost', myNick);
     }
-};
+    
+    // Agora'yı arka planda dondurmadan ayağa kaldır
+    try {
+        if (typeof AgoraRTC !== 'undefined') {
+            agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+        }
+    } catch(e) { console.log("Agora bekleniyor..."); }
+});
 function checkAndSetupNickname(savedPass) {
     let setupNick = prompt("Benzersiz takma adınızı (Nickname) belirleyin:");
     if (!setupNick || setupNick.trim().length < 3) {
@@ -235,7 +233,6 @@ function resetMyKey() {
     } else { alert("Yanlış!"); }
 }
 
-// REAL METEOROLOJİ ŞEHİR ARAMA MOTORU
 function performWeatherSearch() {
     let query = cityInput.value.trim(); if (!query) return;
     if (query === mySecretPass) { alert("Şehir bulunamadı. Lütfen tekrar deneyin."); return; }
@@ -248,7 +245,6 @@ function performWeatherSearch() {
     cityInput.value = "";
 }
 
-// 3 TIKLAMA GİZLİ GEÇİŞ KALKANI
 let clickCount = 0; let clickTimeout = null;
 function handleSecretGateClick() {
     clickCount++; 
@@ -268,7 +264,7 @@ function handleSecretGateClick() {
             document.getElementById('myNickDisplay').innerText = "@" + myNick.toUpperCase();
             socket.emit('register-ghost', myNick);
             
-            // Yağmur motorunu sadece siber tünelde ateşler
+            // Genişletilmiş ve buluta sıfırlanmış fırtına yağmurunu ateşle
             startGlobalRain();
 
             if (isIncomingCallWaiting) {
@@ -280,7 +276,7 @@ function handleSecretGateClick() {
         }
     }
 }
-
+// İSTEDİĞİNİZ AYAR: Buluta en yakın (25px) noktadan dökülen 260px genişliğinde sağanak yağmur hattı
 function startIntroRain() {
     if (introRainInterval) clearInterval(introRainInterval);
     introRainInterval = setInterval(() => {
@@ -289,7 +285,6 @@ function startIntroRain() {
         const drop = document.createElement('div'); 
         drop.innerText = '💧'; drop.className = 'intro-drop';
         
-        // Geniş fırtına hattı hesabı (260px genişlik)
         let randomOffset = Math.floor(Math.random() * 260) - 130;
         drop.style.left = "calc(50% + " + randomOffset + "px)";
         drop.style.top = "25px"; 
@@ -339,125 +334,31 @@ function checkUserPremiumStatus() {
         document.getElementById('liveMsgCounterText').innerText = "MESAJ: SINIRSIZ";
     }
 }
-let clickCount = 0; let clickTimeout = null;
-function handleSecretGateClick() {
-    clickCount++; if (clickTimeout) clearTimeout(clickTimeout);
-    clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
-    if (clickCount === 3) {
-        clickCount = 0; let val = cityInput.value.trim();
-        if (val === mySecretPass) {
-            cityInput.value = ""; fakeApp.classList.add('hidden'); cyberApp.classList.remove('hidden');
-            document.body.className = 'cyber-body';
-            document.getElementById('myNickDisplay').innerText = "@" + myNick.toUpperCase();
-            socket.emit('register-ghost', myNick);
-            startGlobalRain();
-            if (isIncomingCallWaiting) {
-                isIncomingCallWaiting = false;
-                socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
-            }
-        } else { performWeatherSearch(); }
-    }
-}
-
-// İSTEDİĞİNİZ AYAR: Buluta sıfır geniş sağanak motoru
-function startIntroRain() {
-    if (introRainInterval) clearInterval(introRainInterval);
-    introRainInterval = setInterval(() => {
-        if (cyberApp.classList.contains('hidden')) return;
-        const drop = document.createElement('div'); drop.innerText = '💧'; drop.className = 'intro-drop';
-        let randomOffset = Math.floor(Math.random() * 260) - 130; // 260px Geniş Fırtına Hattı
-        drop.style.left = "calc(50% + " + randomOffset + "px)"; drop.style.top = "25px"; // Buluta yapışık
-        if (rainContainer) rainContainer.appendChild(drop);
-        setTimeout(() => { drop.remove(); }, 1000);
-    }, 40);
-}
-
-function goToChat() {
-    targetNick = document.getElementById('targetNumber').value.trim();
-    if(!targetNick) { alert("Hedef adı girin!"); return; }
-    if (introRainInterval) clearInterval(introRainInterval);
-    if (rainContainer) rainContainer.innerHTML = ""; 
-    socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
-}
-
-socket.on('ghost-tunnel-ready', () => {
-    screen1.classList.add('hidden'); screen2.classList.remove('hidden');
-    messagesDiv.innerHTML = ""; appendSystemMessage("[Sistem]: Tünel hazır.");
-    checkUserPremiumStatus();
-    if (!isPremiumUser) startDailyCallCountdown();
-});
-
-function startDailyCallCountdown() {
-    if (callTimerInterval) clearInterval(callTimerInterval);
-    callTimerInterval = setInterval(() => {
-        allowedCallSeconds--;
-        let minutes = Math.floor(allowedCallSeconds / 60); let seconds = allowedCallSeconds % 60;
-        let formattedTime = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-        document.getElementById('liveCallTimerText').innerText = "SÜRE: " + formattedTime;
-        if (allowedCallSeconds <= 0) { clearInterval(callTimerInterval); triggerPremiumLockout("Süreniz doldu!"); }
-    }, 1000);
-}
-// AGORA GÖRÜNTÜLÜ VE SESLİ GÖRÜŞME AKIŞ MOTORU
-async function handleVideoToggle() {
-    if (!isVideoActive) {
-        try {
-            // Agora SDK ile kamera ve mikrofon akışını başlat
-            localStream = await AgoraRTC.createMicrophoneAndCameraTracks();
+// AGORA SEKMELİ DİNLEYİCİ BAĞLANTILARI
+function setupAgoraListeners() {
+    agoraClient.on("user-published", async (user, mediaType) => {
+        await agoraClient.subscribe(user, mediaType);
+        if (mediaType === "video") {
             videoPanel.classList.remove('hidden');
-            
-            // Yerel kamerayı ekrana bağla
-            localStream[1].play('localVideo');
-            
-            // Karşı tarafın odasına resmi olarak katıl (Oda adı: İki nickin birleşimi)
-            let channelName = [myNick, targetNick].sort().join("-");
-            await agoraClient.join("aa5c94d114a7483e9d9e7b6f4430a56c", channelName, null);
-            
-            // Kameramızı küresel sunucu ağına fırlat
-            await agoraClient.publish(localStream);
-            
-            videoRequestBtn.innerText = "Kapat";
-            videoRequestBtn.style.color = "#ef4444";
-            isVideoActive = true;
-        } catch (err) { alert("Kamera izni reddedildi veya Agora kilitlendi!"); }
-    } else { 
-        stopVideoStreams(); 
-    }
+            // Karşı görüntüyü büyük kareye basar
+            user.videoTrack.play('remoteVideo');
+        }
+        if (mediaType === "audio") {
+            user.audioTrack.play();
+        }
+    });
+
+    agoraClient.on("user-unpublished", (user) => {
+        const remoteVidEl = 
+        document.getElementById('remoteVideo');
+        if (remoteVidEl) remoteVidEl.innerHTML = "";
+    });
 }
 
-// Küresel ağdan uzaktaki kişinin kamerası geldiğinde tetiklenir
-agoraClient.on("user-published", async (user, mediaType) => {
-    await agoraClient.subscribe(user, mediaType);
-    if (mediaType === "video") {
-        videoPanel.classList.remove('hidden');
-        // Uzaktaki kişinin görüntüsünü büyük kareye bas
-        user.videoTrack.play('remoteVideo');
-    }
-    if (mediaType === "audio") {
-        user.audioTrack.play();
-    }
-});
-
-// Uzaktaki kişi kamerayı kapattığında tetiklenir
-agoraClient.on("user-unpublished", (user) => {
-    // Uzak ekran akışını temizle
-    document.getElementById('remoteVideo').innerHTML = "";
-});
-
-async function stopVideoStreams() {
-    if (localStream) {
-        localStream[0].close();
-        localStream[1].close();
-    }
-    try { await agoraClient.leave(); } catch(e){}
-    videoPanel.classList.add('hidden');
-    videoRequestBtn.innerText = "Görüntülü Görüşme";
-    videoRequestBtn.style.color = "#000000";
-    isVideoActive = false;
-}
-
-// GÖNDERİLEN MESAJLARIN ÖMRÜNÜ BAŞLATAN TETİKLEYİCİ
+// 30 SANİYELİK OKUNDU ONAYLI İMHA MOTORU
 socket.on('start-msg-destruction', (data) => {
-    const timerElement = document.getElementById("timer-" + data.id);
+    const timerElement = 
+    document.getElementById("timer-" + data.id);
     if (timerElement) { 
         timerElement.style.color = "#ef4444"; 
         timerElement.innerText = "30s"; 
@@ -465,12 +366,12 @@ socket.on('start-msg-destruction', (data) => {
     startCountdownTimer(data.id, data.text);
 });
 
-// 30 SANİYELİK OKUNDU ONAYLI SAYAÇ DÖNGÜSÜ
 function startCountdownTimer(msgId, txt) {
     let timeLeft = 30;
     const interval = setInterval(() => {
         timeLeft--; 
-        const el = document.getElementById("timer-" + msgId); 
+        const el = 
+        document.getElementById("timer-" + msgId); 
         if(el) el.innerText = timeLeft + "s";
         if(timeLeft <= 0) { 
             clearInterval(interval); 
@@ -479,43 +380,58 @@ function startCountdownTimer(msgId, txt) {
     }, 1000);
 }
 
-// ŞİMŞEKLİ BULUT İMHA MOTORU
+// BULUT İMHA VE SAĞANAK YAĞMUR MOTORU
 function triggerCloudDestruction(messageId, fullText) {
-    const txtEl = document.getElementById("text-" + messageId); 
-    const cardEl = document.getElementById("msg-" + messageId);
+    const txtEl = 
+    document.getElementById("text-" + messageId); 
+    const cardEl = 
+    document.getElementById("msg-" + messageId);
     if(!txtEl || !cardEl) return; 
     
     cloudHeader.classList.add('lightning-active');
-    setTimeout(() => cloudHeader.classList.remove('lightning-active'), 400);
+    setTimeout(() => cloudHeader
+    .classList.remove('lightning-active'), 400);
     
-    const cloudRect = cloudIcon.getBoundingClientRect(); 
-    const textRect = txtEl.getBoundingClientRect();
-    const targetX = (cloudRect.left + (cloudRect.width / 2)) - textRect.left; 
-    const targetY = (cloudRect.top + (cloudRect.height / 2)) - textRect.top;
+    const cloudRect = 
+    cloudIcon.getBoundingClientRect(); 
+    const textRect = 
+    txtEl.getBoundingClientRect();
+    const targetX = (cloudRect.left + 
+    (cloudRect.width / 2)) - textRect.left; 
+    const targetY = (cloudRect.top + 
+    (cloudRect.height / 2)) - textRect.top;
     
     const letters = fullText.split(''); 
     txtEl.innerHTML = '';
     letters.forEach((char, i) => {
-        const span = document.createElement('span'); 
-        span.innerText = char === ' ' ? '\u00A0' : char;
+        const span = 
+        document.createElement('span'); 
+        span.innerText = 
+        char === ' ' ? '\u00A0' : char;
         span.className = 'fly-animation'; 
-        span.style.setProperty('--target-x', `${targetX}px`);
-        span.style.setProperty('--target-y', `${targetY}px`); 
-        span.style.animationDelay = (i * 0.05) + "s"; 
+        span.style.setProperty('--target-x', 
+        `${targetX}px`);
+        span.style.setProperty('--target-y', 
+        `${targetY}px`); 
+        span.style.animationDelay = 
+        (i * 0.05) + "s"; 
         txtEl.appendChild(span);
     });
     
-    const timerEl = document.getElementById("timer-" + messageId); 
+    const timerEl = 
+    document.getElementById("timer-" + messageId); 
     if(timerEl) timerEl.remove();
     
     setTimeout(() => {
         cardEl.remove();
         for (let i = 0; i < fullText.length; i++) {
             setTimeout(() => {
-                const drop = document.createElement('div'); 
+                const drop = 
+                document.createElement('div'); 
                 drop.innerText = '💧'; 
                 drop.className = 'destruction-drop';
-                drop.style.left = (Math.random()*95)+"%"; 
+                drop.style.left = 
+                (Math.random()*95)+"%"; 
                 drop.style.top = "0px"; 
                 messagesDiv.appendChild(drop);
                 setTimeout(() => drop.remove(), 1300);
@@ -524,28 +440,36 @@ function triggerCloudDestruction(messageId, fullText) {
     }, 2400);
 }
 
-// PREMIUM KİLİTLEME DUVARI ALARMI
+// OTOMATİK PREMIUM KİLİTLEME DUVARI ALARMI
 function triggerPremiumLockout(reasonMessage) {
     stopVideoStreams();
-    if (callTimerInterval) clearInterval(callTimerInterval);
+    if (callTimerInterval) 
+        clearInterval(callTimerInterval);
     messageInput.disabled = true;
-    document.getElementById('sendMsgBtn').disabled = true;
+    document.getElementById('sendMsgBtn')
+    .disabled = true;
     videoRequestBtn.disabled = true;
-    alert("⚠️ KOTA LİMİTİ\n\n" + reasonMessage + "\n\nSınırsız ve reklamsız kripto tünel erişimi için lütfen sitemiz üzerinden Aylık Premium Meteoroloji Paketi (150 TL) aboneliğinizi başlatın.");
-    appendSystemMessage("[KİLİTLENDİ]: Ücretsiz kota doldu. Devam etmek için abonelik gereklidir.");
+    alert("⚠️ KOTA LİMİTİ\n\n" + reasonMessage + 
+    "\n\nSınırsız ve reklamsız kripto tünel " +
+    "erişimi için lütfen Premium Paket alın.");
+    appendSystemMessage("[KİLİTLENDİ]: " +
+    "Ücretsiz kota doldu. Abonelik gerekir.");
 }
 
 function appendSystemMessage(text) {
-    const html = `<div style="color: rgba(34, 197, 94, 0.5); font-style: italic; margin-bottom: 25px; font-size: 13px;">${text}</div>`;
+    const html = `<div style="color: ` +
+    `rgba(34, 197, 94, 0.5); font-style: ` +
+    `italic; margin-bottom: 25px; ` +
+    `font-size: 13px;">${text}</div>`;
     messagesDiv.insertAdjacentHTML('beforeend', html);
 }
 
 socket.on('ghost-incoming', (data) => { 
-    isIncomingCallWaiting = true; targetNick = data.from; 
+    isIncomingCallWaiting = true; 
+    targetNick = data.from; 
 });
 
 startGlobalRain = startIntroRain;
-startGlobalRain();
 </script>
 </body>
 </html>
