@@ -145,127 +145,177 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
     </div>
 </div>
 </div>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
-const configuration = { iceServers: [{ urls: 'stun:://google.com' }] };
-
-let fakeApp, cyberApp, cityInput, secretTriggerNode;
-let searchBtn, settingsBtn, screen1, screen2;
-let messagesDiv, messageInput, rainContainer;
-let cloudIcon, cloudHeader, videoPanel, videoRequestBtn;
-
-let introRainInterval = null; let localStream = null;
-let peerConnection = null; let isVideoActive = false;
-let myNick = ""; let targetNick = "";
-let isIncomingCallWaiting = false; let mySecretPass = "";
-let totalRoomMessages = 0; let allowedCallSeconds = 120;
-let callTimerInterval = null; let isPremiumUser = false;
-
-window.onload = function() {
-    fakeApp = document.getElementById('fakeApp');
-    cyberApp = document.getElementById('cyberApp');
-    cityInput = document.getElementById('cityInput');
-    secretTriggerNode = document.getElementById('secretTriggerNode');
-    searchBtn = document.getElementById('searchBtn');
-    settingsBtn = document.getElementById('settingsBtn');
-    screen1 = document.getElementById('screen1');
-    screen2 = document.getElementById('screen2');
-    messagesDiv = document.getElementById('messages');
-    messageInput = document.getElementById('messageInput');
-    rainContainer = document.getElementById('rainContainer');
-    cloudIcon = document.getElementById('cloudIcon');
-    cloudHeader = document.getElementById('cloudHeader');
-    videoPanel = document.getElementById('videoPanel');
-    videoRequestBtn = document.getElementById('videoRequestBtn');
-
-    if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
-    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
-    if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
-
-    mySecretPass = localStorage.getItem('ghost_key');
-    myNick = localStorage.getItem('ghost_nick');
-
-    if (!mySecretPass || !myNick) {
-        let setupPass = "";
-        while (!setupPass || setupPass.trim().length < 3) {
-            setupPass = prompt("Sisteme giriş şifrenizi belirleyin (En az 3 karakter):");
-        }
-        checkAndSetupNickname(setupPass.trim());
-    } else {
-        if (settingsBtn) settingsBtn.style.display = "none";
-    }
-};
-function checkAndSetupNickname(savedPass) {
-    let setupNick = prompt("Benzersiz takma adınızı (Nickname) belirleyin:");
-    if (!setupNick || setupNick.trim().length < 3) {
-        alert("Geçersiz isim! Tekrar deneyin."); checkAndSetupNickname(savedPass); return;
-    }
-    socket.emit('check-nickname-availability', setupNick.trim(), (response) => {
-        if (response.available) {
-            localStorage.setItem('ghost_key', savedPass);
-            localStorage.setItem('ghost_nick', setupNick.trim());
-            mySecretPass = savedPass; myNick = setupNick.trim();
-            alert("Kimlik verileriniz cihaza kilitlendi!");
-            if (settingsBtn) settingsBtn.style.display = "none";
-        } else {
-            alert("⚠️ Bu takma ad kapılmış! Farklı isim girin."); checkAndSetupNickname(savedPass);
-        }
-    });
-}
-
-function resetMyKey() {
-    let check = prompt("Mevcut şifreniz:");
-    if (check === mySecretPass) {
-        let newKey = prompt("Yeni şifre:");
-        if(newKey && newKey.trim().length >= 3) {
-            localStorage.setItem('ghost_key', newKey.trim());
-            mySecretPass = newKey.trim(); alert("Güncellendi!");
-        }
-    } else { alert("Yanlış!"); }
-}
-
-function performWeatherSearch() {
-    let query = cityInput.value.trim(); if (!query) return;
-    if (query === mySecretPass) { alert("Şehir bulunamadı. Tekrar deneyin."); return; }
-    document.getElementById('cityNameText').innerText = query.toUpperCase() + " - Sağanak Yağışlı";
-    let randomTemp = Math.floor(Math.random() * 15) + 10;
-    secretTriggerNode.innerText = `☀️ ${randomTemp}°C`;
-    document.getElementById('humidityText').innerText = "💧 Nem: %" + (Math.floor(Math.random() * 30) + 60);
-    document.getElementById('windText').innerText = "💨 Rüzgar: " + (Math.floor(Math.random() * 20) + 10) + " km/s";
-    cityInput.value = "";
-}
-
-function checkUserPremiumStatus() {
-    let cacheStatus = localStorage.getItem('ghost_premium');
-    if (cacheStatus === 'active') {
-        isPremiumUser = true;
-        document.getElementById('premiumStatusText').innerText = "PREMIUM HESAP (SINIRSIZ)";
-        document.getElementById('premiumStatusText').style.color = "#4ade80";
-        document.getElementById('liveCallTimerText').innerText = "SÜRE: SINIRSIZ";
-        document.getElementById('liveMsgCounterText').innerText = "MESAJ: SINIRSIZ";
-    }
-}
-
 let clickCount = 0; let clickTimeout = null;
 function handleSecretGateClick() {
-    clickCount++; if (clickTimeout) clearTimeout(clickTimeout);
+    clickCount++; 
+    if (clickTimeout) clearTimeout(clickTimeout);
     clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
+    
     if (clickCount === 3) {
-        clickCount = 0; let val = cityInput.value.trim();
+        clickCount = 0; 
+        let val = cityInput.value.trim();
+        
         if (val === mySecretPass) {
-            cityInput.value = ""; fakeApp.classList.add('hidden'); cyberApp.classList.remove('hidden');
+            cityInput.value = ""; 
+            fakeApp.classList.add('hidden'); 
+            cyberApp.classList.remove('hidden');
             document.body.className = 'cyber-body';
-            document.getElementById('myNickDisplay').innerText = "@" + myNick.toUpperCase();
+            
+            document.getElementById('myNickDisplay')
+            .innerText = "@" + myNick.toUpperCase();
             socket.emit('register-ghost', myNick);
+            
+            // YAĞMUR MOTORU: Siber odaya girildiği an akışı kesin tetikle
             startGlobalRain();
+
             if (isIncomingCallWaiting) {
                 isIncomingCallWaiting = false;
-                socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
+                socket.emit('initiate-ghost-call', 
+                { sender: myNick, receiver: targetNick });
             }
-        } else { performWeatherSearch(); }
+        } else { 
+            performWeatherSearch(); 
+        }
     }
 }
+
+function startIntroRain() {
+    if (introRainInterval) clearInterval(introRainInterval);
+    introRainInterval = setInterval(() => {
+        if (cyberApp.classList.contains('hidden')) return;
+
+        const drop = document.createElement('div'); 
+        drop.innerText = '💧'; drop.className = 'intro-drop';
+        drop.style.left = (Math.random() * 95) + "%"; 
+        drop.style.top = "0px"; 
+        
+        // Damlaları siber bulutun altındaki yağmur kutusuna nizamî dök
+        if (rainContainer) {
+            rainContainer.appendChild(drop); 
+        }
+        setTimeout(() => drop.remove(), 1100);
+    }, 45);
+}
+
+function goToChat() {
+    targetNick = document.getElementById('targetNumber').value.trim();
+    if(!targetNick) { alert("Hedef adı girin!"); return; }
+    if (introRainInterval) clearInterval(introRainInterval);
+    if (rainContainer) rainContainer.innerHTML = ""; 
+    socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
+}
+
+socket.on('ghost-tunnel-ready', () => {
+    screen1.classList.add('hidden'); screen2.classList.remove('hidden');
+    messagesDiv.innerHTML = ""; appendSystemMessage("[Sistem]: Güvenli tünel hazır.");
+    checkUserPremiumStatus();
+    if (!isPremiumUser) startDailyCallCountdown();
+});
+let clickCount = 0; let clickTimeout = null;
+function handleSecretGateClick() {
+    clickCount++; 
+    if (clickTimeout) clearTimeout(clickTimeout);
+    clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
+    
+    if (clickCount === 3) {
+        clickCount = 0; 
+        let val = cityInput.value.trim();
+        
+        if (val === mySecretPass) {
+            cityInput.value = ""; 
+            fakeApp.classList.add('hidden'); 
+            cyberApp.classList.remove('hidden');
+            document.body.className = 'cyber-body';
+            
+            document.getElementById('myNickDisplay')
+            .innerText = "@" + myNick.toUpperCase();
+            socket.emit('register-ghost', myNick);
+            
+            // YAĞMUR MOTORU: Siber odaya girildiği an akışı kesin tetikle
+            startGlobalRain();
+
+            if (isIncomingCallWaiting) {
+                isIncomingCallWaiting = false;
+                socket.emit('initiate-ghost-call', 
+                { sender: myNick, receiver: targetNick });
+            }
+        } else { 
+            performWeatherSearch(); 
+        }
+    }
+}
+
+function startIntroRain() {
+    if (introRainInterval) clearInterval(introRainInterval);
+    introRainInterval = setInterval(() => {
+        if (cyberApp.classList.contains('hidden')) return;
+
+        const drop = document.createElement('div'); 
+        drop.innerText = '💧'; drop.className = 'intro-drop';
+        drop.style.left = (Math.random() * 95) + "%"; 
+        drop.style.top = "0px"; 
+        
+        // Damlaları siber bulutun altındaki yağmur kutusuna nizamî dök
+        if (rainContainer) {
+            rainContainer.appendChild(drop); 
+        }
+        setTimeout(() => drop.remove(), 1100);
+    }, 45);
+}
+
+function goToChat() {
+    targetNick = document.getElementById('targetNumber').value.trim();
+    if(!targetNick) { alert("Hedef adı girin!"); return; }
+    if (introRainInterval) clearInterval(introRainInterval);
+    if (rainContainer) rainContainer.innerHTML = ""; 
+    socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
+}
+
+socket.on('ghost-tunnel-ready', () => {
+    screen1.classList.add('hidden'); screen2.classList.remove('hidden');
+    messagesDiv.innerHTML = ""; appendSystemMessage("[Sistem]: Güvenli tünel hazır.");
+    checkUserPremiumStatus();
+    if (!isPremiumUser) startDailyCallCountdown();
+});
+function startDailyCallCountdown() {
+    if (callTimerInterval) clearInterval(callTimerInterval);
+    callTimerInterval = setInterval(() => {
+        allowedCallSeconds--;
+        let minutes = Math.floor(allowedCallSeconds / 60);
+        let seconds = allowedCallSeconds % 60;
+        let formattedTime = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        document.getElementById('liveCallTimerText').innerText = "SÜRE: " + formattedTime;
+        if (allowedCallSeconds <= 0) {
+            clearInterval(callTimerInterval);
+            triggerPremiumLockout("Günlük 2 dakikalık konuşma süreniz doldu!");
+        }
+    }, 1000);
+}
+
+document.getElementById('chatForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!isPremiumUser && totalRoomMessages >= 10) { triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!"); return; }
+    const txt = messageInput.value.trim(); if (!txt) return;
+    const msgId = "g" + Math.random().toString(36).substr(2, 9);
+    socket.emit('send-ghost-msg', { id: msgId, text: txt });
+    if (!isPremiumUser) {
+        totalRoomMessages++;
+        document.getElementById('liveMsgCounterText').innerText = "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
+    }
+    const html = `<div id="msg-${msgId}" style="padding:6px; width:100%; text-align:left; margin-bottom:20px;"><div style="display:inline; font-size:18px; font-weight:bold; color:#4ade80;"><span id="text-${msgId}">${txt}</span><span style="font-size:14px; color:#6b7280; font-weight:bold; margin-left:12px;" id="timer-${msgId}">İletiliyor...</span></div></div>`;
+    messagesDiv.insertAdjacentHTML('beforeend', html); messagesDiv.scrollTop = messagesDiv.scrollHeight; messageInput.value = "";
+});
+
+socket.on('receive-ghost-msg', (data) => {
+    if (!isPremiumUser) {
+        totalRoomMessages++;
+        document.getElementById('liveMsgCounterText').innerText = "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
+        if (totalRoomMessages > 10) { triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!"); return; }
+    }
+    const html = `<div id="msg-${data.id}" style="padding:6px; width:100%; text-align:left; margin-bottom:20px;"><div style="display:inline; font-size:18px; font-weight:bold; color:#4ade80;"><span id="text-${data.id}">${data.text}</span><span style="font-size:14px; color:#ef4444; font-weight:bold; margin-left:12px;" id="timer-${data.id}">30s</span></div></div>`;
+    messagesDiv.insertAdjacentHTML('beforeend', html); messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    socket.emit('msg-read-confirm', { id: data.id, text: data.text }); startCountdownTimer(data.id, data.text);
+});
 // WEBRTC CANLI SES VE GÖRÜNTÜ AKIŞ KÖPRÜSÜ
 function createPeerConnection() {
     peerConnection = new RTCPeerConnection(configuration);
