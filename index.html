@@ -70,7 +70,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 <!-- TUZAK HAVA DURUMU EKRANI -->
 <div id="fakeApp" class="fake-container">
     <div class="fake-title">☀️ Devlet Meteoroloji</div>
-    <!-- GİZLİ TETİKLEME ALANI: Şifre girilince tam olarak bu kutuya 3 kez tıklanacak -->
+    <!-- GİZLİ TETİKLEME ALANI: Şifre yazılıp tam bu kutuya 3 kez tıklanacak -->
     <div id="secretTriggerNode" class="weather-info">☀️ 24°C</div>
     <p id="cityNameText" style="font-size:15px; color:#4b5563;">Ankara - Açık</p>
     <div class="weather-details">
@@ -78,12 +78,11 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
         <div id="windText">💨 Rüzgar: 12 km/s</div>
     </div>
     <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
-        <!-- Şifrenin yazılacağı asıl input alanı -->
         <input id="cityInput" type="text" placeholder="Şehir Ara..." class="fake-input" autocomplete="off" style="padding-right: 45px;">
         <span id="searchBtn" style="position: absolute; right: 15px; cursor: pointer; font-size: 18px; z-index: 20; color: #3b82f6;">🔍</span>
     </div>
     <br>
-    <button type="button" id="settingsBtn" onclick="resetMyKey()" class="settings-btn">Ayarlar</button>
+    <button type="button" id="settingsBtn" class="settings-btn">Ayarlar</button>
 </div>
 <div id="cyberApp" class="hidden" style="height:100%; width:100%;">
 <div class="ghost-main-frame">
@@ -100,12 +99,12 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
         <div class="auth-box-clean">
             <div class="auth-title">GHOST AUTHENTICATION</div>
             <div style="text-align: left; margin-bottom: 15px;">
-                <label style="color: #16a34a; font-size: 11px;">KİMLİĞİNİZ (KİLİTLİ):</label>
+                <label style="color: #16a34a; font-size: 11px;">KİMLİĞİNİZ (SABİTLENDİ):</label>
                 <div id="myNickDisplay" style="color: #4ade80; font-size: 18px; font-weight: bold; padding: 10px 0; border-bottom: 2px dashed rgba(34, 197, 94, 0.3); letter-spacing: 2px;">YÜKLENİYOR...</div>
             </div>
             <div>
                 <label>BAĞLANILACAK HEDEF:</label>
-                <input id="targetNumber" type="tel" placeholder="Hedef takma adı yazın..." class="cyber-input" style="margin-top: 5px;">
+                <input id="targetNumber" type="tel" placeholder="Hedef ismi yazın..." class="cyber-input" style="margin-top: 5px;">
             </div>
             <div class="btn-grid">
                 <button type="button" onclick="goToChat()" class="action-btn"><span>📞</span>Sesli</button>
@@ -125,15 +124,15 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
                 </div>
             </div>
             <div id="messages"></div>
-            <div id="videoPanel" class="hidden" style="width: 100%; max-width: 340px; margin: 0 auto 5px auto; display: flex; flex-direction: row; gap: 10px; height: 90px; shrink: 0;">
-                <div style="flex: 1.6; border: 2px solid #22c55e; background-color: #000; position: relative; overflow: hidden; aspect-ratio: 4/3;"><video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video></div>
-                <div style="flex: 1; border: 2px solid #22c55e; background-color: #000; position: relative; overflow: hidden; aspect-ratio: 1/1;"><video id="localVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video></div>
+            <div id="videoPanel" class="hidden" style="width: 100%; max-width: 340px; margin: 0 auto 5px auto; display: flex; gap: 10px; height: 90px;">
+                <div style="flex: 1.6; border: 2px solid #22c55e; position: relative; overflow: hidden;"><video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video></div>
+                <div style="flex: 1; border: 2px solid #22c55e; position: relative; overflow: hidden;"><video id="localVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video></div>
             </div>
-            <form id="chatForm" style="display: flex; flex-direction: column; gap: 6px; width: 100%; shrink: 0; padding-bottom: 5px;">
-                <input id="messageInput" type="text" placeholder="Şifreli mesajınızı yazın..." autocomplete="off" style="width: 100%; background-color: #000000; border: 2px solid #22c55e; padding: 7px 10px; color: #4ade80; font-family: monospace; font-size: 14px; outline: none;">
+            <form id="chatForm" style="display: flex; flex-direction: column; gap: 6px; width: 100%; padding-bottom: 5px;">
+                <input id="messageInput" type="text" placeholder="Mesajınızı yazın..." autocomplete="off" style="width: 100%; background-color: #000000; border: 2px solid #22c55e; padding: 7px 10px; color: #4ade80; outline: none;">
                 <div style="display: flex; gap: 10px; width: 100%;">
-                    <button id="videoRequestBtn" type="button" onclick="handleVideoToggle()" style="flex: 1; background-color: #22c55e; color: #000000; border: none; font-family: monospace; font-weight: bold; padding: 9px 0; font-size: 12px; text-transform: uppercase; cursor: pointer;">Görüntülü Görüşme</button>
-                    <button id="sendMsgBtn" type="submit" style="flex: 1; background-color: #22c55e; color: #000000; border: none; font-family: monospace; font-weight: bold; padding: 9px 0; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer;">GÖNDER</button>
+                    <button id="videoRequestBtn" type="button" onclick="handleVideoToggle()" style="flex: 1; background-color: #22c55e; color: #000000; border: none; padding: 9px 0; font-weight: bold;">Görüntülü</button>
+                    <button id="sendMsgBtn" type="submit" style="flex: 1; background-color: #22c55e; color: #000000; border: none; padding: 9px 0; font-weight: bold;">GÖNDER</button>
                 </div>
             </form>
         </div>
@@ -153,7 +152,8 @@ let peerConnection = null; let isVideoActive = false;
 let myNick = ""; let targetNick = "";
 let isIncomingCallWaiting = false; let mySecretPass = "";
 
-window.onload = function() {
+// SAYFA VE TÜM BUTONLAR HAZIR OLDUĞUNDA TETİKLENİR
+window.addEventListener('load', () => {
     fakeApp = document.getElementById('fakeApp');
     cyberApp = document.getElementById('cyberApp');
     cityInput = document.getElementById('cityInput');
@@ -170,11 +170,13 @@ window.onload = function() {
     videoPanel = document.getElementById('videoPanel');
     videoRequestBtn = document.getElementById('videoRequestBtn');
 
-    // Dinleyicileri Elementlere Sımsıkı Bağla
+    // Tıklama olaylarını güvenli bağla
     if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
-    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
+    if (settingsBtn) settingsBtn.addEventListener('click', () => { resetMyKey(); });
     if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
+    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
 
+    // Hafızayı kontrol et
     mySecretPass = localStorage.getItem('ghost_key');
     myNick = localStorage.getItem('ghost_nick');
 
@@ -187,7 +189,7 @@ window.onload = function() {
     } else {
         if (settingsBtn) settingsBtn.style.display = "none";
     }
-};
+});
 
 function checkAndSetupNickname(savedPass) {
     let setupNick = prompt("Benzersiz takma adınızı (Nickname) belirleyin:");
@@ -221,101 +223,7 @@ function resetMyKey() {
 
 function performWeatherSearch() {
     let query = cityInput.value.trim(); if (!query) return;
-    if (query === mySecretPass) { alert("Şehir bulunamadı. Lütfen tekrar deneyin."); return; }
-    
-    document.getElementById('cityNameText').innerText = query.toUpperCase() + " - Sağanak Yağışlı";
-    let randomTemp = Math.floor(Math.random() * 15) + 10;
-    secretTriggerNode.innerText = `☀️ ${randomTemp}°C`;
-    document.getElementById('humidityText').innerText = "💧 Nem: %" + (Math.floor(Math.random() * 30) + 60);
-    document.getElementById('windText').innerText = "💨 Rüzgar: " + (Math.floor(Math.random() * 20) + 10) + " km/s";
-    cityInput.value = "";
-}
-</script>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
-const configuration = { iceServers: [{ urls: 'stun:://google.com' }] };
-
-let fakeApp, cyberApp, cityInput, secretTriggerNode;
-let searchBtn, settingsBtn, screen1, screen2;
-let messagesDiv, messageInput, rainContainer;
-let cloudIcon, cloudHeader, videoPanel, videoRequestBtn;
-
-let introRainInterval = null; let localStream = null;
-let peerConnection = null; let isVideoActive = false;
-let myNick = ""; let targetNick = "";
-let isIncomingCallWaiting = false; let mySecretPass = "";
-
-window.onload = function() {
-    fakeApp = document.getElementById('fakeApp');
-    cyberApp = document.getElementById('cyberApp');
-    cityInput = document.getElementById('cityInput');
-    secretTriggerNode = document.getElementById('secretTriggerNode');
-    searchBtn = document.getElementById('searchBtn');
-    settingsBtn = document.getElementById('settingsBtn');
-    screen1 = document.getElementById('screen1');
-    screen2 = document.getElementById('screen2');
-    messagesDiv = document.getElementById('messages');
-    messageInput = document.getElementById('messageInput');
-    rainContainer = document.getElementById('rainContainer');
-    cloudIcon = document.getElementById('cloudIcon');
-    cloudHeader = document.getElementById('cloudHeader');
-    videoPanel = document.getElementById('videoPanel');
-    videoRequestBtn = document.getElementById('videoRequestBtn');
-
-    // Dinleyicileri Elementlere Sımsıkı Bağla
-    if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
-    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
-    if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
-
-    mySecretPass = localStorage.getItem('ghost_key');
-    myNick = localStorage.getItem('ghost_nick');
-
-    if (!mySecretPass || !myNick) {
-        let setupPass = "";
-        while (!setupPass || setupPass.trim().length < 3) {
-            setupPass = prompt("Sisteme giriş şifrenizi belirleyin (En az 3 karakter):");
-        }
-        checkAndSetupNickname(setupPass.trim());
-    } else {
-        if (settingsBtn) settingsBtn.style.display = "none";
-    }
-};
-
-function checkAndSetupNickname(savedPass) {
-    let setupNick = prompt("Benzersiz takma adınızı (Nickname) belirleyin:");
-    if (!setupNick || setupNick.trim().length < 3) {
-        alert("Geçersiz isim! Tekrar deneyin."); checkAndSetupNickname(savedPass); return;
-    }
-    socket.emit('check-nickname-availability', setupNick.trim(), (response) => {
-        if (response.available) {
-            localStorage.setItem('ghost_key', savedPass);
-            localStorage.setItem('ghost_nick', setupNick.trim());
-            mySecretPass = savedPass; myNick = setupNick.trim();
-            alert("Kimlik verileriniz cihaza kilitlendi!");
-            if (settingsBtn) settingsBtn.style.display = "none";
-        } else {
-            alert("⚠️ Bu takma ad kapılmış! Farklı isim girin.");
-            checkAndSetupNickname(savedPass);
-        }
-    });
-}
-
-function resetMyKey() {
-    let check = prompt("Mevcut şifreniz:");
-    if (check === mySecretPass) {
-        let newKey = prompt("Yeni şifre:");
-        if(newKey && newKey.trim().length >= 3) {
-            localStorage.setItem('ghost_key', newKey.trim());
-            mySecretPass = newKey.trim(); alert("Güncellendi!");
-        }
-    } else { alert("Yanlış!"); }
-}
-
-function performWeatherSearch() {
-    let query = cityInput.value.trim(); if (!query) return;
-    if (query === mySecretPass) { alert("Şehir bulunamadı. Lütfen tekrar deneyin."); return; }
-    
+    if (query === mySecretPass) { alert("Şehir bulunamadı. Tekrar deneyin."); return; }
     document.getElementById('cityNameText').innerText = query.toUpperCase() + " - Sağanak Yağışlı";
     let randomTemp = Math.floor(Math.random() * 15) + 10;
     secretTriggerNode.innerText = `☀️ ${randomTemp}°C`;
@@ -325,192 +233,205 @@ function performWeatherSearch() {
 }
 </script>
 <script>
-// WEBRTC SES VE GÖRÜNTÜ AKIŞ KÖPRÜSÜ
-function createPeerConnection() {
-    peerConnection = new RTCPeerConnection(configuration);
-    if (localStream) { 
-        localStream.getTracks().forEach(track => 
-            peerConnection.addTrack(track, localStream)
-        ); 
+// GİZLİ SİBER GEÇİŞ VE 3 DOKUNMA ALGILAYICI MOTORU
+let clickCount = 0; let clickTimeout = null;
+function handleSecretGateClick() {
+    clickCount++; 
+    if (clickTimeout) clearTimeout(clickTimeout);
+    clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
+    
+    if (clickCount === 3) {
+        clickCount = 0; 
+        let val = cityInput.value.trim();
+        
+        if (val === mySecretPass) {
+            cityInput.value = ""; 
+            fakeApp.classList.add('hidden'); 
+            cyberApp.classList.remove('hidden');
+            document.body.className = 'cyber-body';
+            
+            // Kullanıcı adını çerçevenin içine bas
+            document.getElementById('myNickDisplay').innerText = "@" + myNick.toUpperCase();
+            
+            // Sunucu havuzuna kayıt yolla
+            socket.emit('register-ghost', myNick);
+            
+            // Yağmur damlalarını canlandır
+            startGlobalRain();
+
+            // Arkada bekleyen çağrı varsa otomatik aç
+            if (isIncomingCallWaiting) {
+                isIncomingCallWaiting = false;
+                socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
+            }
+        } else { 
+            performWeatherSearch(); 
+        }
     }
-    peerConnection.ontrack = (event) => { 
-        if(event.streams && event.streams[0]) { 
-            document.getElementById('remoteVideo').srcObject = event.streams[0]; 
-        } 
-    };
-    peerConnection.onicecandidate = (event) => { 
-        if (event.candidate) socket.emit('ghost-ice', event.candidate); 
-    };
 }
 
-async function handleVideoToggle() {
-    if (!isVideoActive) {
-        try {
-            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            videoPanel.classList.remove('hidden'); 
-            document.getElementById('localVideo').srcObject = localStream;
-            createPeerConnection(); 
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer); 
-            socket.emit('ghost-offer', offer);
-            videoRequestBtn.innerText = "Kapat"; 
-            videoRequestBtn.style.color = "#ef4444"; 
-            isVideoActive = true;
-        } catch (err) { alert("Kamera veya ses izni reddedildi!"); }
-    } else { stopVideoStreams(); }
+// BÜYÜK MAVİ BULUT YAĞMUR MOTORU
+function startIntroRain() {
+    introRainInterval = setInterval(() => {
+        if (cyberApp.classList.contains('hidden')) return;
+        const drop = document.createElement('div'); 
+        drop.innerText = '💧'; 
+        drop.className = 'intro-drop';
+        drop.style.left = (Math.random() * 95) + "%"; 
+        drop.style.top = "0px"; 
+        rainContainer.appendChild(drop);
+        setTimeout(() => drop.remove(), 1100);
+    }, 45);
 }
 
-socket.on('ghost-offer', async (offer) => {
-    if (confirm("Görüntülü bağlantı isteği onaylansın mı?")) {
-        try {
-            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            videoPanel.classList.remove('hidden'); 
-            document.getElementById('localVideo').srcObject = localStream;
-            createPeerConnection(); 
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-            const answer = await peerConnection.createAnswer(); 
-            await peerConnection.setLocalDescription(answer);
-            socket.emit('ghost-answer', answer); 
-            videoRequestBtn.innerText = "Kapat"; 
-            videoRequestBtn.style.color = "#ef4444"; 
-            isVideoActive = true;
-        } catch (err) { console.error(err); }
-    }
-});
-
-socket.on('ghost-answer', async (answer) => { 
-    if (peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); 
-});
-
-socket.on('ghost-ice', async (candidate) => { 
-    if (peerConnection) { 
-        try { await peerConnection.addIceCandidate(new RTCIceCandidate(candidate)); } catch(e) {} 
-    } 
-});
-
-function stopVideoStreams() {
-    if (localStream) localStream.getTracks().forEach(track => track.stop());
-    if (peerConnection) peerConnection.close(); 
-    videoPanel.classList.add('hidden');
-    videoRequestBtn.innerText = "Görüntülü Görüşme"; 
-    videoRequestBtn.style.color = "#000000"; 
-    isVideoActive = false;
+function goToChat() {
+    targetNick = document.getElementById('targetNumber').value.trim();
+    if(!targetNick) { alert("Hedef adı girin!"); return; }
+    if (introRainInterval) clearInterval(introRainInterval);
+    rainContainer.innerHTML = ""; 
+    socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
 }
 
-// 30 SANİYELİK OKUNDU ONAYLI İMHA MOTORU VE ODA KOTASI
+socket.on('ghost-tunnel-ready', () => {
+    screen1.classList.add('hidden'); 
+    screen2.classList.remove('hidden');
+    messagesDiv.innerHTML = ""; 
+    appendSystemMessage("[Sistem]: Güvenli tünel hazır.");
+    checkUserPremiumStatus();
+    if (!isPremiumUser) startDailyCallCountdown();
+});
+
+function startDailyCallCountdown() {
+    if (callTimerInterval) clearInterval(callTimerInterval);
+    callTimerInterval = setInterval(() => {
+        allowedCallSeconds--;
+        let minutes = Math.floor(allowedCallSeconds / 60);
+        let seconds = allowedCallSeconds % 60;
+        let formattedTime = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        document.getElementById('liveCallTimerText').innerText = "SÜRE: " + formattedTime;
+        
+        if (allowedCallSeconds <= 0) {
+            clearInterval(callTimerInterval);
+            triggerPremiumLockout("Günlük 2 dakikalık konuşma süreniz doldu!");
+        }
+    }, 1000);
+}
+
+// MESAJ GÖNDERME VE ODA KOTASI KONTROLÜ
 document.getElementById('chatForm').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!isPremiumUser && totalRoomMessages >= 10) {
-        triggerPremiumLockout("Odadaki toplam 10 adet mesajlaşma limiti dolmuştur!");
+        triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!");
         return;
     }
-    const txt = messageInput.value.trim(); 
-    if(!txt) return;
-    
-    const msgId = "g" + Math.random().toString(36).substr(2, 9); 
+    const txt = messageInput.value.trim(); if (!txt) return;
+    const msgId = "g" + Math.random().toString(36).substr(2, 9);
     socket.emit('send-ghost-msg', { id: msgId, text: txt });
     
     if (!isPremiumUser) {
         totalRoomMessages++;
         document.getElementById('liveMsgCounterText').innerText = "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
     }
-
-    const html = `<div id="msg-${msgId}" style="padding: 6px; width: 100%; text-align: left; margin-bottom: 20px;"><div style="display: inline; font-size: 18px; font-weight: bold; color: #4ade80;"><span id="text-${msgId}">${txt}</span><span style="font-size: 14px; color: #6b7280; font-weight: bold; margin-left: 12px;" id="timer-${msgId}">İletiliyor...</span></div></div>`;
-    messagesDiv.insertAdjacentHTML('beforeend', html); 
-    messagesDiv.scrollTop = messagesDiv.scrollHeight; 
-    messageInput.value = "";
+    const html = `<div id="msg-${msgId}" style="padding:6px; width:100%; text-align:left; margin-bottom:20px;"><div style="display:inline; font-size:18px; font-weight:bold; color:#4ade80;"><span id="text-${msgId}">${txt}</span><span style="font-size:14px; color:#6b7280; font-weight:bold; margin-left:12px;" id="timer-${msgId}">İletiliyor...</span></div></div>`;
+    messagesDiv.insertAdjacentHTML('beforeend', html);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; messageInput.value = "";
 });
 
 socket.on('receive-ghost-msg', (data) => {
     if (!isPremiumUser) {
         totalRoomMessages++;
         document.getElementById('liveMsgCounterText').innerText = "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
-        if (totalRoomMessages > 10) {
-            triggerPremiumLockout("Odadaki toplam 10 adet mesajlaşma limiti dolmuştur!");
-            return;
-        }
+        if (totalRoomMessages > 10) { triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!"); return; }
     }
-    const html = `<div id="msg-${data.id}" style="padding: 6px; width: 100%; text-align: left; margin-bottom: 20px;"><div style="display: inline; font-size: 18px; font-weight: bold; color: #4ade80;"><span id="text-${data.id}">${data.text}</span><span style="font-size: 14px; color: #ef4444; font-weight: bold; margin-left: 12px;" id="timer-${data.id}">30s</span></div></div>`;
-    messagesDiv.insertAdjacentHTML('beforeend', html); 
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    
-    socket.emit('msg-read-confirm', { id: data.id, text: data.text }); 
-    startCountdownTimer(data.id, data.text);
+    const html = `<div id="msg-${data.id}" style="padding:6px; width:100%; text-align:left; margin-bottom:20px;"><div style="display:inline; font-size:18px; font-weight:bold; color:#4ade80;"><span id="text-${data.id}">${data.text}</span><span style="font-size:14px; color:#ef4444; font-weight:bold; margin-left:12px;" id="timer-${data.id}">30s</span></div></div>`;
+    messagesDiv.insertAdjacentHTML('beforeend', html); messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    socket.emit('msg-read-confirm', { id: data.id, text: data.text }); startCountdownTimer(data.id, data.text);
 });
+
+// WEBRTC GÖRÜNTÜLÜ VE SESLİ GÖRÜŞME ALTYAPISI
+function createPeerConnection() {
+    peerConnection = new RTCPeerConnection(configuration);
+    if (localStream) { localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream)); }
+    peerConnection.ontrack = (event) => { if (event.streams && event.streams) { document.getElementById('remoteVideo').srcObject = event.streams; } };
+    peerConnection.onicecandidate = (event) => { if (event.candidate) socket.emit('ghost-ice', event.candidate); };
+}
+
+async function handleVideoToggle() {
+    if (!isVideoActive) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            videoPanel.classList.remove('hidden'); document.getElementById('localVideo').srcObject = localStream;
+            createPeerConnection(); const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer); socket.emit('ghost-offer', offer);
+            videoRequestBtn.innerText = "Kapat"; videoRequestBtn.style.color = "#ef4444"; isVideoActive = true;
+        } catch (err) { alert("Kamera izni reddedildi!"); }
+    } else { stopVideoStreams(); }
+}
+
+socket.on('ghost-offer', async (offer) => {
+    if (confirm("Görüntülü bağlantı isteği geliyor. Onaylıyor musunuz?")) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            videoPanel.classList.remove('hidden'); document.getElementById('localVideo').srcObject = localStream;
+            createPeerConnection(); await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnection.createAnswer(); await peerConnection.setLocalDescription(answer);
+            socket.emit('ghost-answer', answer); videoRequestBtn.innerText = "Kapat"; videoRequestBtn.style.color = "#ef4444"; isVideoActive = true;
+        } catch (err) { console.error(err); }
+    }
+});
+
+socket.on('ghost-answer', async (answer) => { if (peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); });
+socket.on('ghost-ice', async (candidate) => { if (peerConnection) { try { await peerConnection.addIceCandidate(new RTCIceCandidate(candidate)); } catch(e) {} } });
+
+function stopVideoStreams() {
+    if (localStream) localStream.getTracks().forEach(track => track.stop());
+    if (peerConnection) peerConnection.close(); videoPanel.classList.add('hidden');
+    videoRequestBtn.innerText = "Görüntülü"; videoRequestBtn.style.color = "#000000"; isVideoActive = false;
+}
 
 socket.on('start-msg-destruction', (data) => {
     const timerElement = document.getElementById("timer-" + data.id);
-    if (timerElement) { 
-        timerElement.style.color = "#ef4444"; 
-        timerElement.innerText = "30s"; 
-    }
+    if (timerElement) { timerElement.style.color = "#ef4444"; timerElement.innerText = "30s"; }
     startCountdownTimer(data.id, data.text);
 });
 
 function startCountdownTimer(msgId, txt) {
     let timeLeft = 30;
     const interval = setInterval(() => {
-        timeLeft--; 
-        const el = document.getElementById("timer-" + msgId); 
-        if(el) el.innerText = timeLeft + "s";
-        if(timeLeft <= 0) { 
-            clearInterval(interval); 
-            triggerCloudDestruction(msgId, txt); 
-        }
+        timeLeft--; const el = document.getElementById("timer-" + msgId); if(el) el.innerText = timeLeft + "s";
+        if(timeLeft <= 0) { clearInterval(interval); triggerCloudDestruction(msgId, txt); }
     }, 1000);
 }
 
-// ŞİMŞEKLİ İMHA VE YAĞMUR SİMÜLASYONU
 function triggerCloudDestruction(messageId, fullText) {
-    const txtEl = document.getElementById("text-" + messageId); 
-    const cardEl = document.getElementById("msg-" + messageId);
-    if(!txtEl || !cardEl) return; 
-    
-    cloudHeader.classList.add('lightning-active');
+    const txtEl = document.getElementById("text-" + messageId); const cardEl = document.getElementById("msg-" + messageId);
+    if(!txtEl || !cardEl) return; cloudHeader.classList.add('lightning-active');
     setTimeout(() => cloudHeader.classList.remove('lightning-active'), 400);
-    
-    const cloudRect = cloudIcon.getBoundingClientRect(); 
-    const textRect = txtEl.getBoundingClientRect();
-    const targetX = (cloudRect.left + (cloudRect.width / 2)) - textRect.left; 
-    const targetY = (cloudRect.top + (cloudRect.height / 2)) - textRect.top;
-    
-    const letters = fullText.split(''); 
-    txtEl.innerHTML = '';
+    const cloudRect = cloudIcon.getBoundingClientRect(); const textRect = txtEl.getBoundingClientRect();
+    const targetX = (cloudRect.left + (cloudRect.width / 2)) - textRect.left; const targetY = (cloudRect.top + (cloudRect.height / 2)) - textRect.top;
+    const letters = fullText.split(''); txtEl.innerHTML = '';
     letters.forEach((char, i) => {
-        const span = document.createElement('span'); 
-        span.innerText = char === ' ' ? '\u00A0' : char;
-        span.className = 'fly-animation'; 
-        span.style.setProperty('--target-x', `${targetX}px`);
-        span.style.setProperty('--target-y', `${targetY}px`); 
-        span.style.animationDelay = (i * 0.05) + "s"; 
-        txtEl.appendChild(span);
+        const span = document.createElement('span'); span.innerText = char === ' ' ? '\u00A0' : char;
+        span.className = 'fly-animation'; span.style.setProperty('--target-x', `${targetX}px`);
+        span.style.setProperty('--target-y', `${targetY}px`); span.style.animationDelay = (i * 0.05) + "s"; txtEl.appendChild(span);
     });
-    
-    const timerEl = document.getElementById("timer-" + messageId); 
-    if(timerEl) timerEl.remove();
-    
+    const timerEl = document.getElementById("timer-" + messageId); if(timerEl) timerEl.remove();
     setTimeout(() => {
         cardEl.remove();
         for (let i = 0; i < fullText.length; i++) {
             setTimeout(() => {
-                const drop = document.createElement('div'); 
-                drop.innerText = '💧'; 
-                drop.className = 'destruction-drop';
-                drop.style.left = (Math.random()*95)+"%"; 
-                drop.style.top = "0px"; 
-                messagesDiv.appendChild(drop);
+                const drop = document.createElement('div'); drop.innerText = '💧'; drop.className = 'destruction-drop';
+                drop.style.left = (Math.random()*95)+"%"; drop.style.top = "0px"; messagesDiv.appendChild(drop);
                 setTimeout(() => drop.remove(), 1300);
             }, i * 35);
-        }
-    }, 2400);
-}
+	
+	}
+	}, 2400);
+	}
 
-function appendSystemMessage(text) {
-    const html = `<div style="color: rgba(34, 197, 94, 0.5); font-style: italic; margin-bottom: 25px; font-size: 13px;">${text}</div>`;
-    messagesDiv.insertAdjacentHTML('beforeend', html);
-}
-
-startGlobalRain = startIntroRain;
-</script>
-</body>
-</html>
+	function appendSystemMessage(text) {
+	const html = <div style="color: rgba(34, 197, 94, 0.5); font-style: italic; margin-bottom: 25px; font-size: 13px;">${text}</div>;
+	messagesDiv.insertAdjacentHTML('beforeend', html);
+	}
+	socket.on('ghost-incoming', (data) => { isIncomingCallWaiting = true; targetNick = data.from; });
+	startGlobalRain = startIntroRain;
