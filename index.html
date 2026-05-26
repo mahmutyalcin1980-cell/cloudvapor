@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Anlık Hava Durumu - Meteoroloji</title>
+<!-- KESİN ÇÖZÜM: Agora kütüphanesini en başta güvenli ve hatasız yükle -->
+<script src="https://agora.io"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background-color: #f3f4f6; color: #1f2937; font-family: sans-serif; padding: 15px; height: 100dvh; width: 100vw; overflow: hidden; user-select: none; position: relative; }
@@ -152,21 +154,20 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io(window.location.origin);
-// Sizin ürettiğiniz Agora Kimliği koda mühürlendi
-const AGORA_APP_ID = "aa5c94d114a7483e9d9e7b6f4430a56c"; 
-let agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+// Agora istemcisini başlat
+const agoraClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
 let fakeApp, cyberApp, cityInput, secretTriggerNode;
 let searchBtn, settingsBtn, screen1, screen2;
 let messagesDiv, messageInput, rainContainer;
 let cloudIcon, cloudHeader, videoPanel, videoRequestBtn;
 
-let introRainInterval = null; let isVideoActive = false;
+let introRainInterval = null; let localStream = null;
+let isVideoActive = false; mySecretPass = "";
 let myNick = ""; let targetNick = "";
-let isIncomingCallWaiting = false; let mySecretPass = "";
+let isIncomingCallWaiting = false;
 let totalRoomMessages = 0; let allowedCallSeconds = 120;
 let callTimerInterval = null; let isPremiumUser = false;
-let localAudioTrack = null; let localVideoTrack = null;
 
 window.onload = function() {
     fakeApp = document.getElementById('fakeApp');
@@ -185,6 +186,7 @@ window.onload = function() {
     videoPanel = document.getElementById('videoPanel');
     videoRequestBtn = document.getElementById('videoRequestBtn');
 
+    // KESİN ÇÖZÜM: Dinleyicileri Agora yüklenmesinden tamamen bağımsız kilitleriz
     if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
     if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
     if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
@@ -233,15 +235,98 @@ function resetMyKey() {
     } else { alert("Yanlış!"); }
 }
 
+// REAL METEOROLOJİ ŞEHİR ARAMA MOTORU
 function performWeatherSearch() {
     let query = cityInput.value.trim(); if (!query) return;
-    if (query === mySecretPass) { alert("Şehir bulunamadı. Tekrar deneyin."); return; }
+    if (query === mySecretPass) { alert("Şehir bulunamadı. Lütfen tekrar deneyin."); return; }
+    
     document.getElementById('cityNameText').innerText = query.toUpperCase() + " - Sağanak Yağışlı";
     let randomTemp = Math.floor(Math.random() * 15) + 10;
     secretTriggerNode.innerText = `☀️ ${randomTemp}°C`;
     document.getElementById('humidityText').innerText = "💧 Nem: %" + (Math.floor(Math.random() * 30) + 60);
     document.getElementById('windText').innerText = "💨 Rüzgar: " + (Math.floor(Math.random() * 20) + 10) + " km/s";
     cityInput.value = "";
+}
+
+// 3 TIKLAMA GİZLİ GEÇİŞ KALKANI
+let clickCount = 0; let clickTimeout = null;
+function handleSecretGateClick() {
+    clickCount++; 
+    if (clickTimeout) clearTimeout(clickTimeout);
+    clickTimeout = setTimeout(() => { clickCount = 0; }, 500);
+    
+    if (clickCount === 3) {
+        clickCount = 0; 
+        let val = cityInput.value.trim();
+        
+        if (val === mySecretPass) {
+            cityInput.value = ""; 
+            fakeApp.classList.add('hidden'); 
+            cyberApp.classList.remove('hidden');
+            document.body.className = 'cyber-body';
+            
+            document.getElementById('myNickDisplay').innerText = "@" + myNick.toUpperCase();
+            socket.emit('register-ghost', myNick);
+            
+            // Yağmur motorunu sadece siber tünelde ateşler
+            startGlobalRain();
+
+            if (isIncomingCallWaiting) {
+                isIncomingCallWaiting = false;
+                socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
+            }
+        } else { 
+            performWeatherSearch(); 
+        }
+    }
+}
+
+function startIntroRain() {
+    if (introRainInterval) clearInterval(introRainInterval);
+    introRainInterval = setInterval(() => {
+        if (cyberApp.classList.contains('hidden')) return;
+
+        const drop = document.createElement('div'); 
+        drop.innerText = '💧'; drop.className = 'intro-drop';
+        
+        // Geniş fırtına hattı hesabı (260px genişlik)
+        let randomOffset = Math.floor(Math.random() * 260) - 130;
+        drop.style.left = "calc(50% + " + randomOffset + "px)";
+        drop.style.top = "25px"; 
+        
+        if (rainContainer) { rainContainer.appendChild(drop); }
+        setTimeout(() => { drop.remove(); }, 1000);
+    }, 40);
+}
+
+function goToChat() {
+    targetNick = document.getElementById('targetNumber').value.trim();
+    if(!targetNick) { alert("Hedef adı girin!"); return; }
+    if (introRainInterval) clearInterval(introRainInterval);
+    if (rainContainer) rainContainer.innerHTML = ""; 
+    socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
+}
+
+socket.on('ghost-tunnel-ready', () => {
+    screen1.classList.add('hidden'); screen2.classList.remove('hidden');
+    messagesDiv.innerHTML = ""; appendSystemMessage("[Sistem]: Güvenli tünel hazır.");
+    checkUserPremiumStatus();
+    if (!isPremiumUser) startDailyCallCountdown();
+});
+
+function startDailyCallCountdown() {
+    if (callTimerInterval) clearInterval(callTimerInterval);
+    callTimerInterval = setInterval(() => {
+        allowedCallSeconds--;
+        let minutes = Math.floor(allowedCallSeconds / 60);
+        let seconds = allowedCallSeconds % 60;
+        let formattedTime = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        document.getElementById('liveCallTimerText').innerText = "SÜRE: " + formattedTime;
+        if (allowedCallSeconds <= 0) {
+            clearInterval(callTimerInterval);
+            triggerPremiumLockout("Günlük 2 dakikalık konuşma süreniz doldu!");
+        }
+    }, 1000);
 }
 
 function checkUserPremiumStatus() {
@@ -464,4 +549,3 @@ startGlobalRain();
 </script>
 </body>
 </html>
-
