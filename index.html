@@ -36,12 +36,15 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 0% { transform: translate(0, 0) scale(1); opacity: 1; }
 100% { transform: translate(var(--target-x), var(--target-y)) scale(0.3); opacity: 0; }
 }
+
+/* 1. İSTEK: Yağmurun siber buluta tam sıfırdan yanaşması ve nizamî dökülmesi sağlandı */
 @keyframes rainFallAnimation {
 0% { transform: translateY(0); opacity: 0; }
-20% { opacity: 1; }
+15% { opacity: 1; }
 85% { opacity: 1; }
 100% { transform: translateY(135px); opacity: 0; }
 }
+
 @keyframes destructionRain {
 0% { transform: translateY(0); opacity: 0.9; }
 100% { transform: translateY(650px); opacity: 0; }
@@ -51,6 +54,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 3%, 7% { border-color: #ffffff; }
 }
 .fly-animation { display: inline-block; animation: flyToCenterCloud 2.4s forwards ease-in-out; }
+
 .intro-drop { position: absolute; color: #00a8cc; font-size: 18px; font-weight: bold; animation: rainFallAnimation 1.1s linear infinite !important; pointer-events: none; z-index: 999; display: block !important; }
 .destruction-drop { position: absolute; color: #00a8cc; font-size: 14px; animation: destructionRain 1.3s linear forwards; pointer-events: none; }
 .theme-cloud-active { animation: cloudLightning 4s ease-in-out infinite; }
@@ -77,13 +81,14 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
         <div id="windText">💨 Rüzgar: 12 km/s</div>
     </div>
     <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
-        <!-- KESİN ÇÖZÜM: type="text" yapılarak hem harf hem sayı klavyesi aktif edildi -->
+        <!-- ŞİFRE ALANI: type="text" yapılarak hem harf hem sayı klavyesi telefonlarda açıldı -->
         <input id="cityInput" type="text" placeholder="Şehir Ara..." class="fake-input" autocomplete="off" style="padding-right: 45px;">
         <span id="searchBtn" style="position: absolute; right: 15px; cursor: pointer; font-size: 18px; z-index: 20; color: #3b82f6;">🔍</span>
     </div>
     <br>
     <button type="button" id="settingsBtn" onclick="resetMyKey()" class="settings-btn">Ayarlar</button>
 </div>
+<!-- GİZLİ SİBER ARAYÜZ -->
 <div id="cyberApp" class="hidden" style="height:100%; width:100%;">
 <div class="ghost-main-frame">
     <div style="display: flex; justify-content: center; width: 100%; position: absolute; top: 15px; z-index: 100; pointer-events: none;">
@@ -91,7 +96,7 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
             <div style="position: absolute; width: 55px; height: 55px; background: #000; border-top: 3px solid #0055ff; border-left: 3px solid #0055ff; border-radius: 50%; top: -28px; left: 15px;"></div>
             <div style="position: absolute; width: 70px; height: 70px; background: #000; border-top: 3px solid #0055ff; border-right: 3px solid #0055ff; border-radius: 50%; top: -40px; right: 20px;"></div>
             <span id="cloudIcon" style="font-size: 38px; color: #0055ff; position: relative; z-index: 110;">⚡</span>
-            <div id="rainContainer" style="position: absolute; left: 50%; top: 75px; transform: translateX(-50%); width: 140px; height: 20px;"></div>
+            <div id="rainContainer" style="position: absolute; left: 50%; top: 75px; transform: translateX(-50%); width: 550px; height: 20px;"></div>
         </div>
     </div>
     
@@ -104,7 +109,8 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
             </div>
             <div>
                 <label>BAĞLANILACAK HEDEF:</label>
-                <input id="targetNumber" type="tel" placeholder="Hedef takma adı yazın..." class="cyber-input" style="margin-top: 5px;">
+                <!-- 2. İSTEK: type="text" yapılarak karşı tarafın nickini yazarken harf klavyesinin açılması sağlandı -->
+                <input id="targetNumber" type="text" placeholder="Hedef takma adı yazın..." class="cyber-input" style="margin-top: 5px;">
             </div>
             <div class="btn-grid">
                 <button type="button" onclick="goToChat()" class="action-btn"><span>📞</span>Sesli</button>
@@ -113,9 +119,36 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
             </div>
         </div>
     </div>
+    <div id="screen2" class="screen-container hidden" style="padding: 10px; padding-top: 100px; height: 100%; display: flex; flex-direction: column;">
+        <div style="width: 100%; max-width: 980px; display: flex; flex-direction: column; flex: 1; min-height: 0; position: relative; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; background: rgba(34,197,94,0.1); padding: 6px 12px; border: 1px solid rgba(34,197,94,0.3); shrink: 0; margin-bottom: 5px;">
+                <div id="premiumStatusText" style="color: #eab308; font-weight: bold;">STANDART HESAP (KOTALI)</div>
+                <div style="display: flex; gap: 15px;">
+                    <span id="liveCallTimerText" style="color: #ef4444; font-weight: bold;">SÜRE: 02:00</span>
+                    <span id="liveMsgCounterText" style="color: #4ade80; font-weight: bold;">TOPLAM ODADAKİ MESAJ: 0 / 10</span>
+                </div>
+            </div>
+            <div id="messages" style="flex: 1; overflow-y: auto; padding: 10px; border: none; background: transparent; font-size: 15px; overflow-x: visible; position: relative; min-height: 0; margin-bottom: 5px;">
+                <div style="color: rgba(34, 197, 94, 0.4); font-style: italic; font-size: 13px;">[Sistem]: Kripto tünel hattı açıldı.</div>
+            </div>
+            <div id="videoPanel" class="hidden" style="width: 100%; max-width: 340px; margin: 0 auto 5px auto; display: flex; flex-direction: row; gap: 10px; height: 90px; shrink: 0;">
+                <div style="flex: 1.6; border: 2px solid #22c55e; background-color: #000; position: relative; overflow: hidden; aspect-ratio: 4/3;"><video id="remoteVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video></div>
+                <div style="flex: 1; border: 2px solid #22c55e; background-color: #000; position: relative; overflow: hidden; aspect-ratio: 1/1;"><video id="localVideo" autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video></div>
+            </div>
+            <form id="chatForm" style="display: flex; flex-direction: column; gap: 6px; width: 100%; shrink: 0; padding-bottom: 5px;">
+                <input id="messageInput" type="text" placeholder="Şifreli mesajınızı yazın..." autocomplete="off" style="width: 100%; background-color: #000000; border: 2px solid #22c55e; padding: 7px 10px; color: #4ade80; font-family: monospace; font-size: 14px; outline: none;">
+                <div style="display: flex; gap: 10px; width: 100%;">
+                    <button id="videoRequestBtn" type="button" onclick="handleVideoToggle()" style="flex: 1; background-color: #22c55e; color: #000000; border: none; font-family: monospace; font-weight: bold; padding: 9px 0; font-size: 12px; text-transform: uppercase; cursor: pointer;">Görüntülü Görüşme</button>
+                    <button id="sendMsgBtn" type="submit" style="flex: 1; background-color: #22c55e; color: #000000; border: none; font-family: monospace; font-weight: bold; padding: 9px 0; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer;">GÖNDER</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-// KESİN ÇÖZÜM: Boş soket yerine tarayıcıyı canlı sunucu adresinize doğrudan kilitledik
+// BAĞLANTI İYİLEŞTİRMESİ: Sinyallerin internet ortamında kaybolmaması için köprü kilitlendi
 const socket = io(window.location.origin);
 const configuration = { iceServers: [{ urls: 'stun:://google.com' }] };
 
@@ -156,66 +189,12 @@ window.onload = function() {
     myNick = localStorage.getItem('ghost_nick');
 
     if (!mySecretPass || !myNick) {
-        let setupPass = "";
-        while (!setupPass || setupPass.trim().length < 3) {
-            setupPass = prompt("Sisteme giriş şifrenizi belirleyin (En az 3 karakter):");
-        }
+        let setupPass = prompt("Sisteme giriş şifrenizi belirleyin (En az 3 karakter):");
+        if(!setupPass || setupPass.trim().length < 3) { setupPass = "ghost99"; }
         checkAndSetupNickname(setupPass.trim());
     } else {
         if (settingsBtn) settingsBtn.style.display = "none";
-        // Aktif kullanıcıyı canlı ağa resmi olarak kaydet
         socket.emit('register-ghost', myNick);
-    }
-};
-<script src="/socket.io/socket.io.js"></script>
-<script>
-const socket = io();
-const configuration = { iceServers: [{ urls: 'stun:://google.com' }] };
-
-let fakeApp, cyberApp, cityInput, secretTriggerNode;
-let searchBtn, settingsBtn, screen1, screen2;
-let messagesDiv, messageInput, rainContainer;
-let cloudIcon, cloudHeader, videoPanel, videoRequestBtn;
-
-let introRainInterval = null; let localStream = null;
-let peerConnection = null; let isVideoActive = false;
-let myNick = ""; let targetNick = "";
-let isIncomingCallWaiting = false; let mySecretPass = "";
-let totalRoomMessages = 0; let allowedCallSeconds = 120;
-let callTimerInterval = null; let isPremiumUser = false;
-
-window.onload = function() {
-    fakeApp = document.getElementById('fakeApp');
-    cyberApp = document.getElementById('cyberApp');
-    cityInput = document.getElementById('cityInput');
-    secretTriggerNode = document.getElementById('secretTriggerNode');
-    searchBtn = document.getElementById('searchBtn');
-    settingsBtn = document.getElementById('settingsBtn');
-    screen1 = document.getElementById('screen1');
-    screen2 = document.getElementById('screen2');
-    messagesDiv = document.getElementById('messages');
-    messageInput = document.getElementById('messageInput');
-    rainContainer = document.getElementById('rainContainer');
-    cloudIcon = document.getElementById('cloudIcon');
-    cloudHeader = document.getElementById('cloudHeader');
-    videoPanel = document.getElementById('videoPanel');
-    videoRequestBtn = document.getElementById('videoRequestBtn');
-
-    if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
-    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
-    if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
-
-    mySecretPass = localStorage.getItem('ghost_key');
-    myNick = localStorage.getItem('ghost_nick');
-
-    if (!mySecretPass || !myNick) {
-        let setupPass = "";
-        while (!setupPass || setupPass.trim().length < 3) {
-            setupPass = prompt("Sisteme giriş şifrenizi belirleyin (En az 3 karakter):");
-        }
-        checkAndSetupNickname(setupPass.trim());
-    } else {
-        if (settingsBtn) settingsBtn.style.display = "none";
     }
 };
 function checkAndSetupNickname(savedPass) {
@@ -230,8 +209,10 @@ function checkAndSetupNickname(savedPass) {
             mySecretPass = savedPass; myNick = setupNick.trim();
             alert("Kimlik verileriniz cihaza kilitlendi!");
             if (settingsBtn) settingsBtn.style.display = "none";
+            socket.emit('register-ghost', myNick);
         } else {
-            alert("⚠️ Bu takma ad kapılmış! Farklı isim girin."); checkAndSetupNickname(savedPass);
+            alert("⚠️ Bu takma ad kapılmış! Farklı isim girin.");
+            checkAndSetupNickname(savedPass);
         }
     });
 }
@@ -279,7 +260,6 @@ function handleSecretGateClick() {
             cityInput.value = ""; fakeApp.classList.add('hidden'); cyberApp.classList.remove('hidden');
             document.body.className = 'cyber-body';
             document.getElementById('myNickDisplay').innerText = "@" + myNick.toUpperCase();
-            socket.emit('register-ghost', myNick);
             startGlobalRain();
             if (isIncomingCallWaiting) {
                 isIncomingCallWaiting = false;
@@ -294,35 +274,11 @@ function startIntroRain() {
     introRainInterval = setInterval(() => {
         if (cyberApp.classList.contains('hidden')) return;
         const drop = document.createElement('div'); drop.innerText = '💧'; drop.className = 'intro-drop';
-        drop.style.left = (Math.random() * 115) + "px"; drop.style.top = "45px";
+        // 1. İSTEK DEVAMI: Damlaların bulutun hemen altından sıfıra yakın fırlatılması kilitlendi
+        drop.style.left = (Math.random() * 120) + "px"; drop.style.top = "45px";
         if (rainContainer) rainContainer.appendChild(drop);
-        setTimeout(() => drop.remove(), 1050);
+        setTimeout(() => { drop.remove(); }, 1050);
     }, 50);
-}
-
-function goToChat() {
-    targetNick = document.getElementById('targetNumber').value.trim();
-    if(!targetNick) { alert("Hedef adı girin!"); return; }
-    if (introRainInterval) clearInterval(introRainInterval);
-    if (rainContainer) rainContainer.innerHTML = "";
-    socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
-}
-
-socket.on('ghost-tunnel-ready', () => {
-    screen1.classList.add('hidden'); screen2.classList.remove('hidden');
-    messagesDiv.innerHTML = ""; appendSystemMessage("[Sistem]: Güvenli tünel hazır.");
-    checkUserPremiumStatus(); if (!isPremiumUser) startDailyCallCountdown();
-});
-
-function startDailyCallCountdown() {
-    if (callTimerInterval) clearInterval(callTimerInterval);
-    callTimerInterval = setInterval(() => {
-        allowedCallSeconds--;
-        let minutes = Math.floor(allowedCallSeconds / 60); let seconds = allowedCallSeconds % 60;
-        let formattedTime = (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-        document.getElementById('liveCallTimerText').innerText = "SÜRE: " + formattedTime;
-        if (allowedCallSeconds <= 0) { clearInterval(callTimerInterval); triggerPremiumLockout("Süreniz doldu!"); }
-    }, 1000);
 }
 document.getElementById('chatForm')
 .addEventListener('submit', (e) => {
