@@ -70,15 +70,17 @@ label { display: block; font-size: 11px; text-transform: uppercase; color: #16a3
 <!-- TUZAK HAVA DURUMU EKRANI -->
 <div id="fakeApp" class="fake-container">
     <div class="fake-title">☀️ Devlet Meteoroloji</div>
+    <!-- GİZLİ TETİKLEME ALANI: Şifre girilince tam olarak bu kutuya 3 kez tıklanacak -->
     <div id="secretTriggerNode" class="weather-info">☀️ 24°C</div>
     <p id="cityNameText" style="font-size:15px; color:#4b5563;">Ankara - Açık</p>
     <div class="weather-details">
         <div id="humidityText">💧 Nem: %42</div>
         <div id="windText">💨 Rüzgar: 12 km/s</div>
     </div>
-    <div style="position: relative; display: flex; align-items: center;">
-        <input id="cityInput" type="text" placeholder="Şehir Ara..." class="fake-input" autocomplete="off">
-        <span id="searchBtn" style="position: absolute; right: 15px; cursor: pointer; font-size: 18px;">🔍</span>
+    <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 100%;">
+        <!-- Şifrenin yazılacağı asıl input alanı -->
+        <input id="cityInput" type="text" placeholder="Şehir Ara..." class="fake-input" autocomplete="off" style="padding-right: 45px;">
+        <span id="searchBtn" style="position: absolute; right: 15px; cursor: pointer; font-size: 18px; z-index: 20; color: #3b82f6;">🔍</span>
     </div>
     <br>
     <button type="button" id="settingsBtn" onclick="resetMyKey()" class="settings-btn">Ayarlar</button>
@@ -151,7 +153,7 @@ let peerConnection = null; let isVideoActive = false;
 let myNick = ""; let targetNick = "";
 let isIncomingCallWaiting = false; let mySecretPass = "";
 
-document.addEventListener("DOMContentLoaded", () => {
+window.onload = function() {
     fakeApp = document.getElementById('fakeApp');
     cyberApp = document.getElementById('cyberApp');
     cityInput = document.getElementById('cityInput');
@@ -168,9 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
     videoPanel = document.getElementById('videoPanel');
     videoRequestBtn = document.getElementById('videoRequestBtn');
 
-    searchBtn.addEventListener('click', () => { performWeatherSearch(); });
-    cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
-    secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
+    // Dinleyicileri Elementlere Sımsıkı Bağla
+    if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
+    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
+    if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
 
     mySecretPass = localStorage.getItem('ghost_key');
     myNick = localStorage.getItem('ghost_nick');
@@ -184,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         if (settingsBtn) settingsBtn.style.display = "none";
     }
-});
+};
 
 function checkAndSetupNickname(savedPass) {
     let setupNick = prompt("Benzersiz takma adınızı (Nickname) belirleyin:");
@@ -219,6 +222,100 @@ function resetMyKey() {
 function performWeatherSearch() {
     let query = cityInput.value.trim(); if (!query) return;
     if (query === mySecretPass) { alert("Şehir bulunamadı. Lütfen tekrar deneyin."); return; }
+    
+    document.getElementById('cityNameText').innerText = query.toUpperCase() + " - Sağanak Yağışlı";
+    let randomTemp = Math.floor(Math.random() * 15) + 10;
+    secretTriggerNode.innerText = `☀️ ${randomTemp}°C`;
+    document.getElementById('humidityText').innerText = "💧 Nem: %" + (Math.floor(Math.random() * 30) + 60);
+    document.getElementById('windText').innerText = "💨 Rüzgar: " + (Math.floor(Math.random() * 20) + 10) + " km/s";
+    cityInput.value = "";
+}
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const configuration = { iceServers: [{ urls: 'stun:://google.com' }] };
+
+let fakeApp, cyberApp, cityInput, secretTriggerNode;
+let searchBtn, settingsBtn, screen1, screen2;
+let messagesDiv, messageInput, rainContainer;
+let cloudIcon, cloudHeader, videoPanel, videoRequestBtn;
+
+let introRainInterval = null; let localStream = null;
+let peerConnection = null; let isVideoActive = false;
+let myNick = ""; let targetNick = "";
+let isIncomingCallWaiting = false; let mySecretPass = "";
+
+window.onload = function() {
+    fakeApp = document.getElementById('fakeApp');
+    cyberApp = document.getElementById('cyberApp');
+    cityInput = document.getElementById('cityInput');
+    secretTriggerNode = document.getElementById('secretTriggerNode');
+    searchBtn = document.getElementById('searchBtn');
+    settingsBtn = document.getElementById('settingsBtn');
+    screen1 = document.getElementById('screen1');
+    screen2 = document.getElementById('screen2');
+    messagesDiv = document.getElementById('messages');
+    messageInput = document.getElementById('messageInput');
+    rainContainer = document.getElementById('rainContainer');
+    cloudIcon = document.getElementById('cloudIcon');
+    cloudHeader = document.getElementById('cloudHeader');
+    videoPanel = document.getElementById('videoPanel');
+    videoRequestBtn = document.getElementById('videoRequestBtn');
+
+    // Dinleyicileri Elementlere Sımsıkı Bağla
+    if (searchBtn) searchBtn.addEventListener('click', () => { performWeatherSearch(); });
+    if (cityInput) cityInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { performWeatherSearch(); } });
+    if (secretTriggerNode) secretTriggerNode.addEventListener('click', () => { handleSecretGateClick(); });
+
+    mySecretPass = localStorage.getItem('ghost_key');
+    myNick = localStorage.getItem('ghost_nick');
+
+    if (!mySecretPass || !myNick) {
+        let setupPass = "";
+        while (!setupPass || setupPass.trim().length < 3) {
+            setupPass = prompt("Sisteme giriş şifrenizi belirleyin (En az 3 karakter):");
+        }
+        checkAndSetupNickname(setupPass.trim());
+    } else {
+        if (settingsBtn) settingsBtn.style.display = "none";
+    }
+};
+
+function checkAndSetupNickname(savedPass) {
+    let setupNick = prompt("Benzersiz takma adınızı (Nickname) belirleyin:");
+    if (!setupNick || setupNick.trim().length < 3) {
+        alert("Geçersiz isim! Tekrar deneyin."); checkAndSetupNickname(savedPass); return;
+    }
+    socket.emit('check-nickname-availability', setupNick.trim(), (response) => {
+        if (response.available) {
+            localStorage.setItem('ghost_key', savedPass);
+            localStorage.setItem('ghost_nick', setupNick.trim());
+            mySecretPass = savedPass; myNick = setupNick.trim();
+            alert("Kimlik verileriniz cihaza kilitlendi!");
+            if (settingsBtn) settingsBtn.style.display = "none";
+        } else {
+            alert("⚠️ Bu takma ad kapılmış! Farklı isim girin.");
+            checkAndSetupNickname(savedPass);
+        }
+    });
+}
+
+function resetMyKey() {
+    let check = prompt("Mevcut şifreniz:");
+    if (check === mySecretPass) {
+        let newKey = prompt("Yeni şifre:");
+        if(newKey && newKey.trim().length >= 3) {
+            localStorage.setItem('ghost_key', newKey.trim());
+            mySecretPass = newKey.trim(); alert("Güncellendi!");
+        }
+    } else { alert("Yanlış!"); }
+}
+
+function performWeatherSearch() {
+    let query = cityInput.value.trim(); if (!query) return;
+    if (query === mySecretPass) { alert("Şehir bulunamadı. Lütfen tekrar deneyin."); return; }
+    
     document.getElementById('cityNameText').innerText = query.toUpperCase() + " - Sağanak Yağışlı";
     let randomTemp = Math.floor(Math.random() * 15) + 10;
     secretTriggerNode.innerText = `☀️ ${randomTemp}°C`;
