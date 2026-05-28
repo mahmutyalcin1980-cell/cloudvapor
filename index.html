@@ -225,122 +225,74 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch(e){}
 });
 </script>
-<script>
-function handleMatrixCityClick(cityIndex) {
-    // Tıklanan şehir numarasını diziye ekle (Örn: Paris'e tıklandıysa listeye 1 yazar)
-    clickSessionSequence.push(cityIndex);
-    
-    // Eğer şifre henüz hafızada yoksa (İlk Kurulum Yapılıyorsa)
-    if (!mySecretPass || !myNick) {
-        if (clickSessionSequence.length === 4) { // 4 tık ulaştığında kilitle
-            let selectedPassString = clickSessionSequence.join("-");
-            let setupNick = "";
-            while (!setupNick || setupNick.trim().length < 3) {
-                setupNick = prompt("Sistemde görünecek takma adınızı (Nickname) belirleyin:");
-            }
-            
-            localStorage.setItem('ghost_key', selectedPassString);
-            localStorage.setItem('ghost_nick', setupNick.trim());
-            mySecretPass = selectedPassString;
-            myNick = setupNick.trim();
-            
-            document.getElementById('recIndicator').classList.add('hidden');
-            alert("Şifreniz ve takma adınız cihaza kilitlendi!");
-            clickSessionSequence = [];
-        }
-    } else {
-        // Eğer şifre zaten varsa (Giriş Denemesi Yapılıyorsa)
-        let currentInputPass = clickSessionSequence.join("-");
-        if (currentInputPass === mySecretPass) {
-            clickSessionSequence = [];
-            fakeApp.classList.add('hidden');
-            cyberApp.classList.remove('hidden');
-            document.body.className = 'cyber-body';
-            
-            // KESİN ÇÖZÜM: Yazıldığı gibi (küçük harfse küçük) ekrana bas
-            document.getElementById('myNickDisplay').innerText = "@" + myNick;
-            socket.emit('register-ghost', myNick);
-            startGlobalRain();
-
-            if (isIncomingCallWaiting) {
-                isIncomingCallWaiting = false;
-                socket.emit('initiate-ghost-call', { sender: myNick, receiver: targetNick });
-            }
-        } else if (!mySecretPass.startsWith(currentInputPass)) {
-            // Yanlış şifre basıldıysa seriyi anında sıfırla çaktırma
-            clickSessionSequence = [];
-        }
-    }
-}
-
-// HIZLI TEST GEÇIŞ BUTONU TETIKLEYICISI
-function triggerFastBypassTest() {
-    if (fakeApp && cyberApp) {
-        fakeApp.classList.add('hidden'); 
-        cyberApp.classList.remove('hidden');
-        document.body.className = 'cyber-body';
-        if (myNick) {
-            document.getElementById('myNickDisplay').innerText = "@" + myNick;
-            socket.emit('register-ghost', myNick);
-        }
-        startGlobalRain();
-    }
-}
-</script>
-<script>
-function startIntroRain() {
-    if (introRainInterval) clearInterval(introRainInterval);
-    introRainInterval = setInterval(() => {
-        if (cyberApp.classList.contains('hidden')) return;
-        const drop = document.createElement('div');
-        drop.innerText = '💧'; drop.className = 'intro-drop';
-        
-        // Geniş fırtına hattı (260px) ve buluta en yakın konum (25px)
-        let randomOffset = Math.floor(Math.random() * 260) - 130;
-        drop.style.left = "calc(50% + " + randomOffset + "px)";
-        drop.style.top = "25px";
-        
-        if (rainContainer) rainContainer.appendChild(drop);
-        setTimeout(() => { drop.remove(); }, 1000);
-    }, 40);
-}
-
+// KESİN ÇÖZÜM: Sayfa yenilenme sızıntısını önleyen click yapısı
 function handleSendMessageClick() {
-    if (!isPremiumUser && totalRoomMessages >= 10) {
-        triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!");
-        return;
+    if (!isPremiumUser && totalRoomMessages >= 10) { 
+        triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!"); 
+        return; 
     }
-    const txt = messageInput.value.trim();
+    const txt = messageInput.value.trim(); 
     if (!txt) return;
-
+    
     const msgId = "g" + Math.random().toString(36).substr(2, 9);
     socket.emit('send-ghost-msg', { id: msgId, text: txt });
-
+    
     if (!isPremiumUser) {
         totalRoomMessages++;
-        document.getElementById('liveMsgCounterText').innerText = "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
+        document.getElementById('liveMsgCounterText').innerText = 
+        "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
     }
-
+    
     const html = `<div id="msg-${msgId}" style="padding:6px; width:100%; text-align:left; margin-bottom:20px;"><div style="display:inline; font-size:18px; font-weight:bold; color:#4ade80;"><span id="text-${msgId}">${txt}</span><span style="font-size:14px; color:#6b7280; font-weight:bold; margin-left:12px;" id="timer-${msgId}">İletiliyor...</span></div></div>`;
-    messagesDiv.insertAdjacentHTML('beforeend', html);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    messagesDiv.insertAdjacentHTML('beforeend', html); 
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; 
     messageInput.value = "";
 }
 
-// Enter'a basınca sayfayı yenilemeden click fırlat
-document.addEventListener("DOMContentLoaded", () => {
-    const inputMsgEl = document.getElementById('messageInput');
-    if (inputMsgEl) {
-        inputMsgEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleSendMessageClick();
-        });
+// Enter tuşuna basınca da click tetiklemesi yap
+document.getElementById('messageInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        handleSendMessageClick();
     }
 });
-</script>
-// GÖNDERİLEN MESAJLARIN ÖMRÜNÜ BAŞLATAN TETİKLEYİCİ
+
+socket.on('receive-ghost-msg', (data) => {
+    if (!isPremiumUser) {
+        totalRoomMessages++;
+        document.getElementById('liveMsgCounterText').innerText = 
+        "TOPLAM ODADAKİ MESAJ: " + totalRoomMessages + " / 10";
+        if (totalRoomMessages > 10) { 
+            triggerPremiumLockout("Odadaki 10 adet mesajlaşma limiti doldu!"); 
+            return; 
+        }
+    }
+    const html = `<div id="msg-${data.id}" style="padding:6px; width:100%; text-align:left; margin-bottom:20px;"><div style="display:inline; font-size:18px; font-weight:bold; color:#4ade80;"><span id="text-${data.id}">${data.text}</span><span style="font-size:14px; color:#ef4444; font-weight:bold; margin-left:12px;" id="timer-${data.id}">30s</span></div></div>`;
+    messagesDiv.insertAdjacentHTML('beforeend', html); 
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    socket.emit('msg-read-confirm', { id: data.id, text: data.text }); 
+    startCountdownTimer(data.id, data.text);
+});
+// AGORA SEKMELİ DİNLEYİCİ BAĞLANTILARI
+function setupAgoraListeners() {
+    agoraClient.on("user-published", async (user, mediaType) => {
+        await agoraClient.subscribe(user, mediaType);
+        if (mediaType === "video") {
+            videoPanel.classList.remove('hidden');
+            user.videoTrack.play('remoteVideo');
+        }
+        if (mediaType === "audio") {
+            user.audioTrack.play();
+        }
+    });
+
+    agoraClient.on("user-unpublished", (user) => {
+        const remoteVidEl = document.getElementById('remoteVideo');
+        if (remoteVidEl) remoteVidEl.innerHTML = "";
+    });
+}
+// 30 SANİYELİK OKUNDU ONAYLI İMHA MOTORU
 socket.on('start-msg-destruction', (data) => {
-    const timerElement = 
-    document.getElementById("timer-" + data.id);
+    const timerElement = document.getElementById("timer-" + data.id);
     if (timerElement) { 
         timerElement.style.color = "#ef4444"; 
         timerElement.innerText = "30s"; 
@@ -348,13 +300,11 @@ socket.on('start-msg-destruction', (data) => {
     startCountdownTimer(data.id, data.text);
 });
 
-// 30 SANİYELİK OKUNDU ONAYLI SAYAÇ DÖNGÜSÜ
 function startCountdownTimer(msgId, txt) {
     let timeLeft = 30;
     const interval = setInterval(() => {
         timeLeft--; 
-        const el = 
-        document.getElementById("timer-" + msgId); 
+        const el = document.getElementById("timer-" + msgId); 
         if(el) el.innerText = timeLeft + "s";
         if(timeLeft <= 0) { 
             clearInterval(interval); 
@@ -365,56 +315,41 @@ function startCountdownTimer(msgId, txt) {
 
 // ŞİMŞEKLİ BULUT İMHA MOTORU
 function triggerCloudDestruction(messageId, fullText) {
-    const txtEl = 
-    document.getElementById("text-" + messageId); 
-    const cardEl = 
-    document.getElementById("msg-" + messageId);
+    const txtEl = document.getElementById("text-" + messageId); 
+    const cardEl = document.getElementById("msg-" + messageId);
     if(!txtEl || !cardEl) return; 
     
     cloudHeader.classList.add('lightning-active');
-    setTimeout(() => cloudHeader
-    .classList.remove('lightning-active'), 400);
+    setTimeout(() => cloudHeader.classList.remove('lightning-active'), 400);
     
-    const cloudRect = 
-    cloudIcon.getBoundingClientRect(); 
-    const textRect = 
-    txtEl.getBoundingClientRect();
-    const targetX = (cloudRect.left + 
-    (cloudRect.width / 2)) - textRect.left; 
-    const targetY = (cloudRect.top + 
-    (cloudRect.height / 2)) - textRect.top;
+    const cloudRect = cloudIcon.getBoundingClientRect(); 
+    const textRect = txtEl.getBoundingClientRect();
+    const targetX = (cloudRect.left + (cloudRect.width / 2)) - textRect.left; 
+    const targetY = (cloudRect.top + (cloudRect.height / 2)) - textRect.top;
     
     const letters = fullText.split(''); 
     txtEl.innerHTML = '';
     letters.forEach((char, i) => {
-        const span = 
-        document.createElement('span'); 
-        span.innerText = 
-        char === ' ' ? '\u00A0' : char;
+        const span = document.createElement('span'); 
+        span.innerText = char === ' ' ? '\u00A0' : char;
         span.className = 'fly-animation'; 
-        span.style.setProperty('--target-x', 
-        `${targetX}px`);
-        span.style.setProperty('--target-y', 
-        `${targetY}px`); 
-        span.style.animationDelay = 
-        (i * 0.05) + "s"; 
+        span.style.setProperty('--target-x', `${targetX}px`);
+        span.style.setProperty('--target-y', `${targetY}px`); 
+        span.style.animationDelay = (i * 0.05) + "s"; 
         txtEl.appendChild(span);
     });
     
-    const timerEl = 
-    document.getElementById("timer-" + messageId); 
+    const timerEl = document.getElementById("timer-" + messageId); 
     if(timerEl) timerEl.remove();
     
     setTimeout(() => {
         cardEl.remove();
         for (let i = 0; i < fullText.length; i++) {
             setTimeout(() => {
-                const drop = 
-                document.createElement('div'); 
+                const drop = document.createElement('div'); 
                 drop.innerText = '💧'; 
                 drop.className = 'destruction-drop';
-                drop.style.left = 
-                (Math.random()*95)+"%"; 
+                drop.style.left = (Math.random()*95)+"%"; 
                 drop.style.top = "0px"; 
                 messagesDiv.appendChild(drop);
                 setTimeout(() => drop.remove(), 1300);
@@ -425,28 +360,19 @@ function triggerCloudDestruction(messageId, fullText) {
 // OTOMATİK PREMIUM KİLİTLEME DUVARI ALARMI
 function triggerPremiumLockout(reasonMessage) {
     stopVideoStreams();
-    if (callTimerInterval) 
-        clearInterval(callTimerInterval);
+    if (callTimerInterval) clearInterval(callTimerInterval);
     messageInput.disabled = true;
-    const sendBtn = 
-    document.getElementById('sendMsgBtn');
+    const sendBtn = document.getElementById('sendMsgBtn');
     if (sendBtn) sendBtn.disabled = true;
-    if (videoRequestBtn) 
-        videoRequestBtn.disabled = true;
+    if (videoRequestBtn) videoRequestBtn.disabled = true;
         
-    alert("⚠️ KOTA LİMİTİ\n\n" + reasonMessage + 
-    "\n\nSınırsız erişim için Premium Paket alın.");
+    alert("⚠️ KOTA LİMİTİ\n\n" + reasonMessage + "\n\nSınırsız erişim için Premium Paket alın.");
     appendSystemMessage("[KİLİTLENDİ]: Ücretsiz kota doldu.");
 }
 
 function appendSystemMessage(text) {
-    const html = `<div style="color: ` +
-    `rgba(34, 197, 94, 0.5); font-style: ` +
-    `italic; margin-bottom: 25px; ` +
-    `font-size: 13px;">${text}</div>`;
-    if (messagesDiv) {
-        messagesDiv.insertAdjacentHTML('beforeend', html);
-    }
+    const html = `<div style="color: rgba(34, 197, 94, 0.5); font-style: italic; margin-bottom: 25px; font-size: 13px;">${text}</div>`;
+    if (messagesDiv) messagesDiv.insertAdjacentHTML('beforeend', html);
 }
 
 // HIZLI TEST İÇİN GİZLİ GEÇİŞ MOTORU
@@ -456,8 +382,7 @@ function triggerFastBypassTest() {
         cyberApp.classList.remove('hidden');
         document.body.className = 'cyber-body';
         
-        const nickDisp = 
-        document.getElementById('myNickDisplay');
+        const nickDisp = document.getElementById('myNickDisplay');
         if (nickDisp && myNick) {
             nickDisp.innerText = "@" + myNick;
             socket.emit('register-ghost', myNick);
